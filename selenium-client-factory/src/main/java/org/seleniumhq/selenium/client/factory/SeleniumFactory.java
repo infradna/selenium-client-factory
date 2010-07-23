@@ -23,6 +23,7 @@
  */
 package org.seleniumhq.selenium.client.factory;
 
+import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
 
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.URL;
+import java.sql.DriverManager;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,14 +41,65 @@ import java.util.logging.Logger;
 import static java.util.logging.Level.WARNING;
 
 /**
+ * Factory of {@link Selenium}.
+ *
+ * <p>
+ * Compared to directly initializing {@link DefaultSelenium}, this additional indirection
+ * allows the build script or a CI server to control how you connect to the selenium.
+ * This makes it easier to run the same set of tests in different environments without
+ * modifying the test code.
+ *
+ * <p>
+ * This is analogous to how you connect to JDBC &mdash; you normally don't directly
+ * instantiate a specific driver, and instead you do {@link DriverManager#getConnection(String)}.
+ *
  * @author Kohsuke Kawaguchi
  */
 public class SeleniumFactory {
-    // TODO: browserURL should be also inferred from the system property and env var.
+    /**
+     * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
+     * and run the test against the domain specified in 'SELENIUM_STARTING_URL' system property or the environment variable.
+     *
+     * <p>
+     * If exists, the system property takes precedence over the environment variable.
+     *
+     * <p>
+     * This is just a convenient short-cut for {@code new SeleniumFactory().createSelenium()}.
+     */
+    public static Selenium create() {
+        return new SeleniumFactory().createSelenium();
+    }
+
+    /**
+     * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
+     * and run the test against the specified domain.
+     *
+     * <p>
+     * If exists, the system property takes precedence over the environment variable.
+     *
+     * <p>
+     * This is just a convenient short-cut for {@code new SeleniumFactory().createSelenium(browserURL)}.
+     *
+     * @param browserURL
+     *      See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
+     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     */
     public static Selenium create(String browserURL) {
         return new SeleniumFactory().createSelenium(browserURL);
     }
 
+    /**
+     * Uses the specified driver and the test domain and create a driver instance.
+     *
+     * <p>
+     * This is just a convenient short-cut for {@code new SeleniumFactory().setUri(driverUri).createSelenium(browserURL)}.
+     *
+     * @param driverUri
+     *      The URI indicating the Selenium driver to be instantiated.
+     * @param browserURL
+     *      See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
+     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     */
     public static Selenium create(String driverUri, String browserURL) {
         return new SeleniumFactory().setUri(driverUri).createSelenium(browserURL);
     }
@@ -56,44 +109,90 @@ public class SeleniumFactory {
     private Map<String,Object> properties = new HashMap<String,Object>();
 
     public SeleniumFactory() {
-        uri = System.getProperty("SELENIUM_DRIVER");
-        if (uri==null)
-            uri = System.getenv("SELENIUM_DRIVER");
+        uri = readPropertyOrEnv("SELENIUM_DRIVER");
     }
 
+    private static String readPropertyOrEnv(String key) {
+        String v = System.getProperty(key);
+        if (v==null)
+            v = System.getenv(key);
+        return v;
+    }
+
+    /**
+     * Gets the driver URI set by the {@link #setUri(String)}
+     */
     public String getUri() {
         return uri;
     }
 
+    /**
+     * Sets the URI of the Selenium driver.
+     * <p>
+     * Initially, the value of the 'SELENIUM_DRIVER' system property of the environment variable is read
+     * and set. The system property takes precedence over the environment variable.
+     *
+     * @return
+     *      'this' instance to facilitate the fluent API pattern.
+     */
     public SeleniumFactory setUri(String uri) {
         this.uri = uri;
         return this;
     }
 
+    /**
+     * Gets the classloader set by the {@link #setClassLoader(ClassLoader)}.
+     */
     public ClassLoader getClassLoader() {
         return cl;
     }
 
+    /**
+     * Sets the classloader used for searching the driver.
+     * Initially set to {@code Thread.currentThread().getContextClassLoader()} of the thread
+     * that instantiated this factory.
+     *
+     * @return
+     *      'this' instance to facilitate the fluent API pattern.
+     */
     public SeleniumFactory setClassLoader(ClassLoader cl) {
         this.cl = cl;
         return this;
     }
 
+    /**
+     * Sets other misc. driver-specific properties. Refer to the driver implementation
+     * for the valid properties and their expected types.
+     *
+     * @return
+     *      'this' instance to facilitate the fluent API pattern.
+     */
     public SeleniumFactory setProperty(String key, Object value) {
         this.properties.put(key,value);
         return this;
     }
 
+    /**
+     * Retrieves the value of the property previously set.
+     */
     public Object getProperty(String key) {
         return this.properties.get(key);
     }
 
+    /**
+     * Returns the live map that stores the property values.
+     * Convenient for bulk update operations.
+     *
+     * @return never null
+     */
     public Map<String,Object> getProperties() {
         return this.properties;
     }
 
     /**
      * Creates a clone of this factory that's identically configured.
+     * <p>
+     * Properties are only shallowly copied.
      */
     public SeleniumFactory clone() {
         SeleniumFactory f = new SeleniumFactory();
@@ -104,6 +203,34 @@ public class SeleniumFactory {
         return f;
     }
 
+    /**
+     * Based on the current configuration, instantiate a Selenium driver
+     * and returns it.
+     *
+     * <p>
+     * This version implicitly retrieves the 'browserURL' parameter and
+     * calls into {@link #createSelenium(String)} by checking the 'SELENIUM_STARTING_URL'
+     * system property or the environment variable. The system property takes precedence over the environment variable.
+     *
+     * @throws IllegalArgumentException
+     *      if the configuration is invalid, or the driver failed to instantiate.
+     * @return never null
+     */
+    public Selenium createSelenium() {
+        String url = readPropertyOrEnv("SELENIUM_STARTING_URL");
+        if (url==null)
+            throw new IllegalArgumentException("Neither SELENIUM_STARTING_URL system property nor environment variable exists");
+        return createSelenium(url);
+    }
+
+    /**
+     * Based on the current configuration, instantiate a Selenium driver
+     * and returns it.
+     *
+     * @throws IllegalArgumentException
+     *      if the configuration is invalid, or the driver failed to instantiate.
+     * @return never null
+     */
     public Selenium createSelenium(String browserURL) {
         try {
             if (uri==null)

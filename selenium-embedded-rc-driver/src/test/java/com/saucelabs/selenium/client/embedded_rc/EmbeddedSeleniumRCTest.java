@@ -34,7 +34,7 @@ public class EmbeddedSeleniumRCTest extends TestCase {
     public void test1() {
         Selenium s = SeleniumFactory.create("embedded-rc:*firefox", "http://www.google.com/");
         s.start();
-        s.open("http://www.google.com/");
+        s.open("/");
         assertEquals("Google",s.getTitle());
         s.stop();
     }
