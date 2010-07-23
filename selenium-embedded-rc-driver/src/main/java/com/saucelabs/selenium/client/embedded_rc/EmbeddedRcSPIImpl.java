@@ -1,4 +1,4 @@
-package org.seleniumhq.selenium.client.embedded_rc;
+package com.saucelabs.selenium.client.embedded_rc;
 
 import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;

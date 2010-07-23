@@ -1,4 +1,4 @@
-package org.seleniumhq.selenium.client.htmlunit;
+package com.saucelabs.selenium.client.htmlunit;
 
 import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;

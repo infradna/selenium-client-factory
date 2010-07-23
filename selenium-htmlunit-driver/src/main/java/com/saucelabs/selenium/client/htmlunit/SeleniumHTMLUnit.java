@@ -12,7 +12,7 @@
  * of the Denali web site: http://www.denali.be
  *
  */
-package org.seleniumhq.selenium.client.htmlunit;
+package com.saucelabs.selenium.client.htmlunit;
 
 /*
  * Main author(s): Olivier Dony, Denali
