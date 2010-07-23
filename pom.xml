@@ -10,6 +10,7 @@
   <modules>
     <module>selenium-client-factory</module>
     <module>selenium-embedded-rc-driver</module>
+    <module>selenium-htmlunit-driver</module>
   </modules>
 
   <dependencies>
