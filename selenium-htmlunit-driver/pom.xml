@@ -19,6 +19,11 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>selenium-client-factory</artifactId>
       <version>${project.version}</version>
+      <!--
+        Made optional so that the calling application chooses the factory version and the selenium API version.
+        This also makes the uberjar contents correct.
+      -->
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
