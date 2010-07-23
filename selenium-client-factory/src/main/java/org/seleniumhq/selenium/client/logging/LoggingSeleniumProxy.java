@@ -40,7 +40,7 @@ public class LoggingSeleniumProxy implements InvocationHandler, LoggingSelenium 
     private Selenium base;
     private Logger logger = Logger.getLogger(LoggingSeleniumProxy.class.getName());
     private Level level = Level.INFO;
-    private String id = Integer.toHexString(hashCode());
+    private String id = "Selenium"+Integer.toHexString(hashCode());
 
     public LoggingSeleniumProxy(Selenium base) {
         this.base = base;
@@ -58,10 +58,12 @@ public class LoggingSeleniumProxy implements InvocationHandler, LoggingSelenium 
         StringBuilder buf = new StringBuilder();
         try {
             buf.append(id).append(": ");
-            buf.append(method.getName());
-            for (int i=0; i<args.length; i++) {
-                buf.append(i==0?'(':',');
-                appendValue(args[i], buf);
+            buf.append(method.getName()).append('(');
+            if (args!=null) {
+                for (int i=0; i<args.length; i++) {
+                    if (i>0)    buf.append(',');
+                    appendValue(args[i], buf);
+                }
             }
             buf.append(')');
 

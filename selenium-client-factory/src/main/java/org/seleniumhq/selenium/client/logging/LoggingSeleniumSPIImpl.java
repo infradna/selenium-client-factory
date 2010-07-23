@@ -24,14 +24,18 @@
 package org.seleniumhq.selenium.client.logging;
 
 import com.thoughtworks.selenium.Selenium;
+import org.kohsuke.MetaInfServices;
 import org.seleniumhq.selenium.client.factory.SeleniumFactory;
 import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
 
 import java.lang.reflect.Proxy;
 
 /**
+ * {@link SeleniumFactorySPI} that handles "log:...".
+ *
  * @author Kohsuke Kawaguchi
  */
+@MetaInfServices
 public class LoggingSeleniumSPIImpl extends SeleniumFactorySPI {
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
