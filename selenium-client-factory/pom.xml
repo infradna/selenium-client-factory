@@ -8,26 +8,4 @@
   </parent>
   <artifactId>selenium-client-factory</artifactId>
   <name>selenium-client-factory</name>
-
-  <dependencies>
-    <dependency><!-- this dependency is compile-time only -->
-      <groupId>org.kohsuke.metainf-services</groupId>
-      <artifactId>metainf-services</artifactId>
-      <version>1.1</version>
-      <scope>optional</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-      <artifactId>selenium-java-client-driver</artifactId>
-      <version>1.0.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 </project>

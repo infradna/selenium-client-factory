@@ -9,7 +9,30 @@
 
   <modules>
     <module>selenium-client-factory</module>
+    <module>selenium-embedded-rc-driver</module>
   </modules>
+
+  <dependencies>
+    <dependency><!-- this dependency is compile-time only -->
+      <groupId>org.kohsuke.metainf-services</groupId>
+      <artifactId>metainf-services</artifactId>
+      <version>1.1</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium.client-drivers</groupId>
+      <artifactId>selenium-java-client-driver</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
