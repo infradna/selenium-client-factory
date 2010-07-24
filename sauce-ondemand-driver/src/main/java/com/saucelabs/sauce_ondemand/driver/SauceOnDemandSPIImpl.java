@@ -89,6 +89,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
      * Try to find the name of the test as best we can.
      */
     public String getJobName() {
+        // look for the caller of SeleniumFactory
         StackTraceElement[] trace = new Exception().getStackTrace();
         boolean foundFactory = false;
         String callerName = null;
