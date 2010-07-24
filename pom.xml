@@ -15,6 +15,17 @@
     <module>sauce-ondemand-driver</module>
   </modules>
 
+  <distributionManagement>
+    <repository>
+      <id>java.net-m2-repository</id>
+      <url>java-net:/maven2-repository/trunk/repository/</url>
+    </repository>
+    <site>
+      <id>infradna.com</id>
+      <url>scp://www-data@infradna.com/var/www/selenium-client-factory.infradna.com</url>
+    </site>
+  </distributionManagement>
+
   <dependencies>
     <dependency><!-- this dependency is compile-time only -->
       <groupId>org.kohsuke.metainf-services</groupId>
@@ -30,6 +41,26 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <developers>
+    <developer>
+      <id>kohsuke</id>
+      <name>Kohsuke Kawaguchi</name>
+      <email>kohsuke@infradna.com</email>
+    </developer>
+  </developers>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <distribution>repository</distribution>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@infradna.com:selenium-client-factory.git</connection>
+  </scm>
 
   <build>
     <plugins>
