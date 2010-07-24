@@ -12,6 +12,7 @@
     <module>selenium-client-factory</module>
     <module>selenium-embedded-rc-driver</module>
     <module>selenium-htmlunit-driver</module>
+    <module>sauce-ondemand-driver</module>
   </modules>
 
   <dependencies>
