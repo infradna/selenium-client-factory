@@ -34,6 +34,10 @@ public interface SauceOnDemandSelenium extends Selenium {
     /**
      * Obtains the session ID of this Selenium.
      *
+     * <p>
+     * If the session has ended via {@link #stop()},
+     * this method returns the session ID of the last session.
+     *
      * @return null
      *      if the session hasn't started yet.
      */

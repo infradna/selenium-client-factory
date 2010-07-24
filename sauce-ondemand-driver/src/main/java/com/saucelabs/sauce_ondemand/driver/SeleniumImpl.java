@@ -31,6 +31,12 @@ import java.lang.reflect.Field;
  * @author Kohsuke Kawaguchi
  */
 class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
+    /**
+     * {@link DefaultSelenium} throw away the session ID as soon as the {@link #stop()}
+     * is called, so we'll  store it aside.
+     */
+    private String lastSessionId;
+
     SeleniumImpl(String serverHost, int serverPort, String browserStartCommand, String browserURL) {
         super(serverHost, serverPort, browserStartCommand, browserURL);
     }
@@ -57,7 +63,8 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
      * Dump the session ID, so that it can be captured by the CI server.
      */
     private void dumpSessionId() {
-        System.out.println("SauceOnDemandSessionID="+getSessionId());
+        lastSessionId = getSessionId();
+        System.out.println("SauceOnDemandSessionID="+lastSessionId);
     }
     
     public String getSessionId() {
@@ -66,6 +73,7 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
             f.setAccessible(true);
             Object id = f.get(commandProcessor);
             if (id!=null)   return id.toString();
+            return lastSessionId;
         } catch (NoSuchFieldException e) {
             // failed to retrieve the session ID
         } catch (IllegalAccessException e) {
