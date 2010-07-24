@@ -32,10 +32,13 @@ import org.seleniumhq.selenium.client.factory.SeleniumFactory;
  */
 public class SauceOnDemandTest extends TestCase {
     public void test1() {
-        Selenium s = SeleniumFactory.create("sauce-ondemand:?max-duration=300&os=Linux&browser=firefox&browser-version=3.", "http://www.google.com/");
+        Selenium s = SeleniumFactory.create("sauce-ondemand:?max-duration=30&os=Linux&browser=firefox&browser-version=3.", "http://www.google.com/");
         s.start();
         s.open("/");
         assertEquals("Google",s.getTitle());
+
+        assertNotNull(((SauceOnDemandSelenium)s).getSessionId());
+
         s.stop();
     }
 }

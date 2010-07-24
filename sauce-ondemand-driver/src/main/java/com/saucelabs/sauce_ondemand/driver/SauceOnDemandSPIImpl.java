@@ -24,14 +24,13 @@
 package com.saucelabs.sauce_ondemand.driver;
 
 import com.saucelabs.rest.Credential;
-import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import org.seleniumhq.selenium.client.factory.SeleniumFactory;
 import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,6 +79,34 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
             }
         }
 
+        if (paramMap.get("job-name")==null)
+            paramMap.put("job-name",Collections.singletonList(getJobName()));
+
+        return new SeleniumImpl("saucelabs.com",4444, toJSON(paramMap), browserURL);
+    }
+
+    /**
+     * Try to find the name of the test as best we can.
+     */
+    public String getJobName() {
+        StackTraceElement[] trace = new Exception().getStackTrace();
+        boolean foundFactory = false;
+        String callerName = null;
+        for (StackTraceElement e : trace) {
+            if (foundFactory)
+                callerName = e.toString();
+            foundFactory = e.getClassName().equals(SeleniumFactory.class.getName());
+        }
+
+        String vmName = ManagementFactory.getRuntimeMXBean().getName();
+
+        return callerName+" on "+vmName;
+    }
+
+    /**
+     * Converts a multi-map to a JSON format.
+     */
+    private String toJSON(Map<String, List<String>> paramMap) {
         boolean first=true;
         StringBuilder buf = new StringBuilder("{");
         for (Entry<String, List<String>> e : paramMap.entrySet()) {
@@ -100,9 +127,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
             }
         }
         buf.append('}');
-
-        return new DefaultSelenium("saucelabs.com",4444,buf.toString(),browserURL) {
-        };
+        return buf.toString();
     }
 
     private static final String SCHEME = "sauce-ondemand:";
