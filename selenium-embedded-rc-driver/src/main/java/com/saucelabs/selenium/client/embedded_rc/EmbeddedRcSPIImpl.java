@@ -31,6 +31,7 @@ import org.openqa.selenium.server.cli.RemoteControlLauncher;
 import org.seleniumhq.selenium.client.factory.SeleniumFactory;
 import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -41,13 +42,14 @@ import java.net.ServerSocket;
  */
 @MetaInfServices
 public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
-    private static final String JETTY_FORM_SIZE = "org.openqa.jetty.http.HttpRequest.maxFormContentSize";
-
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
         String uri = factory.getUri();
         if (!uri.startsWith(SCHEME))        return null;    // not ours
         String browser = uri.substring(SCHEME.length());
+
+        if (browser.length()==0)
+            browser = getPlatformDefaultBrowser();
 
         // allow the additional parameters to be passed in.
         String[] args = (String[])factory.getProperty("embedded_args");
@@ -103,5 +105,18 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
         }
     }
 
+    protected String getPlatformDefaultBrowser() {
+        if (File.pathSeparatorChar==';')
+            return "*iexplore";
+
+        String osName = System.getProperty("os.name");
+        if (osName.contains("Mac") || osName.startsWith("Darwin"))
+            return "*safari";
+
+        return "*firefox";
+    }
+
     private static final String SCHEME = "embedded-rc:";
+
+    private static final String JETTY_FORM_SIZE = "org.openqa.jetty.http.HttpRequest.maxFormContentSize";
 }
