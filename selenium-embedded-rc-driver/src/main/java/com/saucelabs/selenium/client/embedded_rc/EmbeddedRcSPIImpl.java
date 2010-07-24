@@ -52,8 +52,7 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
             browser = getPlatformDefaultBrowser();
 
         // allow the additional parameters to be passed in.
-        String[] args = (String[])factory.getProperty("embedded_args");
-        if (args==null) args = new String[0];
+        String[] args = getArguments(factory);
         RemoteControlConfiguration configuration = RemoteControlLauncher.parseLauncherOptions(args);
 
         int port = allocateRandomPort();
@@ -86,6 +85,16 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
                 }
             }
         };
+    }
+
+    private String[] getArguments(SeleniumFactory factory) {
+        Object ea = factory.getProperty("embedded_args");
+        if (ea instanceof String)
+            return ((String) ea).split(" +");
+
+        String[] args = (String[]) ea;
+        if (args==null) args = new String[0];
+        return args;
     }
 
     /**
