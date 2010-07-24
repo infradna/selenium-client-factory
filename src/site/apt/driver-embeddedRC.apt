@@ -1,0 +1,34 @@
+  The embedded Selenium RC driver starts Selenium Server embedded in the current JVM, and returns a <<<DefaultSelenium>>> instance configured to talk to it. When the <<<Selenium.stop()>>> method is called to shut down the session, the embedded Selenium server will be terminated as well. This driver eliminates the need to start and stop Selenium RC outside, thereby making your build script considerably simpler.
+
+  This driver recognizes the following URL:
+
+-----------------
+embedded-rc:[browserStartCommand]
+-----------------
+
+  e.g.,
+
+-----------------
+embedded-rc:
+embedded-rc:*opera
+embedded-rc:*iexplore
+-----------------
+
+  The optional <<<browserStartCommand>>> portion specifies the type of the browser to start. If left unspecified, a browser is chosen based on the platform; "*iexplore" on Windows, "*safari" on Mac, and "*firefox" otherwise. 
+
+  This driver is available as a separate jar.
+
+
+Additoinal Properties
+
+  This driver supports the 'embedded_args' property, which allows the caller to specify the command line arguments passed to Selenium RC. It can be either <<<String>>>, which will be split by whitespace, or it can be <<<String[]>>>. See the example below:
+  
+-----------------
+Selenium s = new SeleniumFactory()
+  .setUri("embedded-rc:*firefox")
+  .setProperty("embedded_args",new String[]{"-firefoxProfileTemplate","c:\\abc"})
+  // alternatively...
+  // .setProperty("embedded_args","-firefoxProfileTemplate c:\\abc")
+  .create();
+-----------------
+

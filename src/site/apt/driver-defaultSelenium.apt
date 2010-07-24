@@ -1,0 +1,14 @@
+  The default selenium driver instantiates the <<<DefaultSelenium>>> class that talks to a remotely running Selenium RC. This driver recognizes the following driver URL:
+
+-----------------
+http://host:port/browserStartCommand
+-----------------
+
+  The host and port specifies the endpoint where the Selenium RC runs, and the <<<browserStartCommand>>> portion specifies the browser to run. Several concrete examples shown below: 
+
+-----------------
+http://localhost:4444/*firefox
+http://some.computer:4445/*iexplore
+-----------------
+
+  This driver is packaged into the factory API jar, and thus can be used without having any additional dependency.

@@ -76,32 +76,3 @@ Integration To Your Projects
 
   []
 
-
-
-
-
-  ... or set the system properties of the same name. If you are using Ant, this could look something like this:
-  
------------------------
-<junit>
-  ...
-  <sysproperty key="SELENIUM_DRIVER" value="http://foo.example.com:4444/*firefox"/>
-  <sysproperty key="SELENIUM_STARTING_URL" value="http://myapp:8080/"/>
-</junit>
------------------------
-
-  ... or if you are using Maven, this could look something like this:
-
------------------------
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="..."
-  xsi:schemaLocation="...">
-
-  <build> ... </build>
-  
-  <properties>
-    <SELENIUM_DRIVER>http://foo.example.com:4444/*firefox</SELENIUM_DRIVER>
-    <SELENIUM_STARTING_URL>http://myapp:8080/</SELENIUM_STARTING_URL>
-  </properties>
-</project>
------------------------
-

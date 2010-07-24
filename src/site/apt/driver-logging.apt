@@ -1,0 +1,34 @@
+     -------------
+     Logging Driver
+     -------------
+     -------------
+  
+
+  The logging Selenium driver wraps another Selenium driver and logs every operation and its result into <<<java.util.logging>>>. This driver recognizes the following URL, where <<<<anotherDriverURL>>>> is a complete valid URL of a Selenium driver to be wrapped.
+
+-----------------
+log:<anotherDriverURL>
+-----------------
+
+  Several concrete examples shown below: 
+
+-----------------
+log:http://localhost:4444/*firefox
+log:embedded-rc:*iexplore
+-----------------
+
+  This driver is packaged int the factory API jar, and thus can be used without having any additional dependency.
+  
+
+Customizing Behaviors
+
+  The <<<Selenium>>> instance returned from this driver implements additional <<<LoggingSelenium>>> interface, through which you can customize the logging behavior:
+
+-----------------
+Selenium selenium = SeleniumFactory.create(
+    "log:embedded-rc:*iexplore","http://infradna.com");
+LoggingSelenium ls = (LoggingSelenium)selenium;
+ls.setLogger(Logger.getLogger(this.getClass().getName()));
+ls.setLevel(Level.INFO);
+-----------------
+

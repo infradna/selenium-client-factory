@@ -1,0 +1,41 @@
+Integrating Factory-enabled Tests to Maven
+
+  Add the following dependency to your POM:
+
+-------------
+    <dependency>
+      <groupId>org.seleniumhq.selenium.client.factory</groupId>
+      <artifactId>selenium-client-factory</artifactId>
+      <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
+-------------
+
+  If you are using a driver that's not in the factory jar, you'll also need to list them as a test-scoped dependency.
+
+  To set reasonable default values for configuration parameters while still allowing the user to override, configure your Surefire invocation like this:
+
+-------------
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <SELENIUM_DRIVER>${SELENIUM_DRIVER}</SELENIUM_DRIVER>
+            <SELENIUM_STARTING_URL>${SELENIUM_STARTING_URL}</SELENIUM_STARTING_URL>
+   ...
+               
+  <properties>
+    <SELENIUM_DRIVER>embedded-rc:</SELENIUM_DRIVER>
+    <SELENIUM_STARTING_URL>http://localhost:8080/</SELENIUM_STARTING_URL>
+  </properties>
+-------------
+
+  Individual users can then override those values with the "-D" option when invoking Maven.
+
+
+Using Environment Variables
+
+  Refer to the "Using Environment Variables" section of the "{{{integrate-ant.html}Integrate to Ant}}" page for more about how to use environment variables.
+

@@ -20,8 +20,17 @@
 
     <menu name="Drivers">
       <item name="Default Selenium RC Driver" href="driver-defaultSelenium.html"/>
+      <item name="Logging Driver" href="driver-logging.html"/>
+      <item name="Embedded Selenium RC Driver" href="driver-embeddedRC.html"/>
+      <item name="HtmlUnit Driver" href="driver-htmlUnit.html"/>
+      <item name="Writing a New Driver" href="new-driver.html"/>
     </menu>
 
+    <menu name="Integration">
+      <item name="Integrate to Ant" href="integrate-ant.html" />
+      <item name="Integrate to Maven" href="integrate-maven.html" />
+    </menu>
+    
     <menu name="References">
       <item name="Javadoc" href="apidocs/index.html"/>
     </menu>

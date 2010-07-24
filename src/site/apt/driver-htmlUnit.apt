@@ -1,0 +1,10 @@
+  The HtmlUnit driver uses an invisible browser emulated by HtmlUnit to run Selenium tests, instead of using a real browser like IE or Firefox. This driver is based on an implementation by Olivier Dony. Note that it is missing support for a number of operations, so it may not work with non-trivial tests.
+  
+  This driver recognizes the following URL, without any additional parameters:
+
+---------------
+htmlunit:
+---------------
+
+  This driver is available as a separate jar.
+

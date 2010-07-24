@@ -1,0 +1,4 @@
+  To implement your own Selenium driver, implement <<<org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI>>>.
+The Selenium client factory uses {{{http://download.oracle.com/docs/cd/E17476_01/javase/1.3/docs/guide/jar/jar.html#Service%20Provider}the service loader pattern}} to look up your SPI implementaions, so you need to list your implementation class accordingly. Check out {{{https://metainf-services.dev.java.net/}@MetaInfServices}} for auto-generating the META-INF/services file.
+
+  Your driver should claim a specific URL scheme, like other existing drivers do. The interpretation of the rest of the URL is up to you. See the javadoc of the SPI for more details.

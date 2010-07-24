@@ -1,0 +1,39 @@
+Class Path Setup
+
+  First, make sure <<<selenium-client-factory.jar>>> and driver jars are in your classpath when you run tests.
+
+Integrating Factory-enabled Tests to Ant
+
+  A good idiom is to define the parameters as Ant properties and then pass them to JUnit by using the <<<sysproperty>>> element, like this:
+  
+-----------------------
+<project>
+  <property name="SELENIUM_DRIVER" value="embedded-rc:"/>
+  <property name="SELENIUM_STARTING_URL" value="http://localhost:8080/"/>
+  
+  <target ...>
+    <junit>
+      ...
+      <sysproperty key="SELENIUM_DRIVER" value="${SELENIUM_DRIVER}"/>
+      <sysproperty key="SELENIUM_STARTING_URL" value="${SELENIUM_STARTING_URL}"/>
+    </junit>
+  </target>
+</project>
+-----------------------
+
+  In this way, you can specify reasonable default values in case Ant is launched without any additional parameters. The embedded RC driver is a good default choice as it has minimal external dependency.
+  
+  Users can specify the "-DSELENIUM_DRIVER=..." on Ant invocation to override those defaults. This comes in handy in a CI environment, where you might have existing Selenium RC setup. 
+
+
+Using Environment Variables
+
+  If your Ant build script is kicked off by a wrapper shell script or a batch file, you can just set those parameters as the environment variable instead. In this way, there is no need to explicitly pass in parameters to the JUnit invocation at all. The following example shows you how to set default values while still allowing the caller to override the values.
+
+-----------------------
+#!/bin/sh
+[ -z "$SELENIUM_DRIVER" ] && export SELENIUM_DRIVER=embedded-rc:
+[ -z "$SELENIUM_STARTING_URL" ] && export SELENIUM_STARTING_URL=http://localhost:8080/
+exec ant
+-----------------------
+
