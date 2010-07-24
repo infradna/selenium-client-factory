@@ -8,6 +8,7 @@ import org.seleniumhq.selenium.client.factory.SeleniumFactory;
 import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,7 +74,42 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         }
         buf.append('}');
 
-        return new DefaultSelenium("saucelabs.com",4444,buf.toString(),browserURL);
+        return new DefaultSelenium("saucelabs.com",4444,buf.toString(),browserURL) {
+            @Override
+            public void start() {
+                super.start();
+                dumpSessionId();
+            }
+
+            @Override
+            public void start(String optionsString) {
+                super.start(optionsString);
+                dumpSessionId();
+            }
+
+            @Override
+            public void start(Object optionsObject) {
+                super.start(optionsObject);
+                dumpSessionId();
+            }
+
+            /**
+             * Dump the session ID, so that it can be captured by the CI server.
+             */
+            private void dumpSessionId() {
+                try {
+                    Field f = commandProcessor.getClass().getDeclaredField("sessionId");
+                    f.setAccessible(true);
+                    Object id = f.get(commandProcessor);
+                    if (id!=null)
+                        System.out.println("SauceOnDemandSessionID="+id);
+                } catch (NoSuchFieldException e) {
+                    // failed to retrieve the session ID
+                } catch (IllegalAccessException e) {
+                    // failed to retrieve the session ID
+                }
+            }
+        };
     }
 
     private static final String SCHEME = "sauce-ondemand:";
