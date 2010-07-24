@@ -6,6 +6,7 @@
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>selenium-client-factory super POM</name>
+  <description>Making Selenium tests more reusable</description>
 
   <modules>
     <module>selenium-client-factory</module>

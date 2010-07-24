@@ -1,0 +1,107 @@
+Why?
+
+  As more and more drivers are available that understands the Selenium protocol, the "browser" configuration parameter of the selenium constructor is getting abused more and more. For example, in Selenium Grid, one can specify arbitrary string (called "environment") to have the grid hub forward the requests to the RC that satisfies the environment:
+
+-----------------------
+new DefaultSelenium("localhost", 4444, "Firefox on Windows", ...);
+-----------------------
+
+  In the Selenium Grid plugin of Hudson, it's interpreted as a boolean expression that specifies the environment:
+
+-----------------------
+new DefaultSelenium("localhost", 4444, “windows&32bit:*firefox”, ...);
+-----------------------
+
+  Sauce OnDemand would take it a lot further by cramming a JSON into it:
+
+-----------------------
+DefaultSelenium selenium = new DefaultSelenium(
+    "saucelabs.com", 4444,
+    "{\"username\": \"username-string\"," +
+    "\"access-key\": \"access-key-string\"," +
+    "\"os\": \"Windows 2003\"," +
+    "\"browser\": \"firefox\"," +
+    "\"browser-version\": \"3.\"," +
+    "\"job-name\": \"This is an example test\"}", ...);
+-----------------------
+
+  However, this approach has a number of drawbacks:
+  
+  
+  * It almost never makes sense to hard-code such information in test cases, so the users need to come up with his own scheme to pass this in from outside, which prevents code / build script reuse among users in the community.
+  
+  * It forces different Selenium backend providers to use the same stock client driver implementation, and that makes it impossible to innovate at the protocol/driver level. For example, the current HTTP-based protocol is not particularly efficient nor secure.
+
+  []
+
+What?
+
+  To address these problems, this library defines a factory that you can use to instantiate a <<<Selenium>>> instance. The simplest possible use is to replace <<<new DefaultSelenium(...)>>> with the following:
+
+-----------------------
+Selenium selenium = SeleniumFactory.create();
+-----------------------
+
+  If your Selenium RC runs at <<<http://foo.example.com:4444/>>> and you are testing <<<http://myapp:8080/>>> with Firefox, either set the environment variables as follows prior to the test execution like this, or set the system properties of the same name:
+  
+-----------------------
+export SELENIUM_DRIVER='http://foo.example.com:4444/*firefox'
+export SELENIUM_STARTING_URL='http://myapp:8080/'
+-----------------------
+
+  This externalization of the parameters enable people to run tests differently without modifying tests or build scripts. For example, you can set things up such that people running tests on their laptop will do so with Embedded Selenium RC, while the same tests will run on Hudson where three sets of the test runs are run in parallel with different browsers.
+
+
+
+Available Drivers
+
+  To make this factory useful out of the box, this project provides several useful driver implementations.
+  
+  * {{{driver-defaultSelenium.html}Default Selenium RC Driver}} that instantiates <<<DefaultSelenium>>> that talks to a remotely running Selenium RC.
+  
+  * {{{driver-logging.html}Logging Driver}} that wraps around another driver and provides logging of the commands.
+
+  * {{{driver-embeddedRC.html}Embedded Selenium RC Driver}} that runs Selenium RC embedded inside your current JVM, eliminating the need to start a separate Selenium RC.
+  
+  * {{{driver-htmlUnit.html}Proof-of-concept HTMLUnit Driver}} that uses HTMLUnit as a in-memory headless browser.
+
+  []
+
+
+Integration To Your Projects
+
+  * {{{integrate-ant.html}Integrate to Ant projects}}
+  
+  * {{{integrate-maven.html}Integrate to Maven projects}}
+
+  []
+
+
+
+
+
+  ... or set the system properties of the same name. If you are using Ant, this could look something like this:
+  
+-----------------------
+<junit>
+  ...
+  <sysproperty key="SELENIUM_DRIVER" value="http://foo.example.com:4444/*firefox"/>
+  <sysproperty key="SELENIUM_STARTING_URL" value="http://myapp:8080/"/>
+</junit>
+-----------------------
+
+  ... or if you are using Maven, this could look something like this:
+
+-----------------------
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="..."
+  xsi:schemaLocation="...">
+
+  <build> ... </build>
+  
+  <properties>
+    <SELENIUM_DRIVER>http://foo.example.com:4444/*firefox</SELENIUM_DRIVER>
+    <SELENIUM_STARTING_URL>http://myapp:8080/</SELENIUM_STARTING_URL>
+  </properties>
+</project>
+-----------------------
+
