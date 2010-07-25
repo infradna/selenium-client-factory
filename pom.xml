@@ -87,4 +87,28 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregated>true</aggregated>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jvnet.sorcerer</groupId>
+        <artifactId>maven-sorcerer-plugin</artifactId>
+        <version>0.8</version>
+      </plugin>
+    </plugins>
+  </reporting>
+        
+  <repositories>
+    <repository>
+      <id>maven.dyndns.org</id>
+      <url>http://maven.dyndns.org/2/</url>
+    </repository>
+  </repositories>
+  
 </project>
