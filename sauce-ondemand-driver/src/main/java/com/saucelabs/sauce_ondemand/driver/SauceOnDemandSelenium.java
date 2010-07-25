@@ -23,7 +23,12 @@
  */
 package com.saucelabs.sauce_ondemand.driver;
 
+import com.saucelabs.rest.Credential;
 import com.thoughtworks.selenium.Selenium;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Additional methods exposed by {@link Selenium} returned from the "sauce-ondemand:..." URL.
@@ -42,4 +47,40 @@ public interface SauceOnDemandSelenium extends Selenium {
      *      if the session hasn't started yet.
      */
     String getSessionId();
+
+    /**
+     * Gets the credential used to connect to Sauce OnDemand.
+     * This information is useful when retrieving server log and video.
+     */
+    Credential getCredential();
+
+    /**
+     * Obtains the URL for downloading the Selenium server log file.
+     * <p>
+     * Note that to acccess this URL you need to send in the credential through BASIC auth.
+     * Note that this file only becomes available some time after the test is stopped.
+     */
+    URL getSeleniumServerLogFile() throws IOException;
+
+    /**
+     * Obtains the URL for downloading the video recording <tt>video.flv</tt>.
+     * <p>
+     * Note that to acccess this URL you need to send in the credential through BASIC auth.
+     * Note that this file only becomes available some time after the test is stopped.
+     */
+    URL getVideo() throws IOException;
+
+    /**
+     * Retrieves the contents of the Selenium server log file.
+     * <p>
+     * Note that this file only becomes available some time after the test is stopped.
+     */
+    public InputStream getSeleniumServerLogFileInputStream() throws IOException;
+
+    /**
+     * Retrieves the contents of the video recording.
+     * <p>
+     * Note that this file only becomes available some time after the test is stopped.
+     */
+    public InputStream getVideoInputStream() throws IOException;
 }

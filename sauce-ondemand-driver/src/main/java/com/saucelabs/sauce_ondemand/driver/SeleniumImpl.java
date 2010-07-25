@@ -23,9 +23,17 @@
  */
 package com.saucelabs.sauce_ondemand.driver;
 
+import com.saucelabs.rest.Credential;
 import com.thoughtworks.selenium.DefaultSelenium;
+import sun.misc.BASE64Encoder;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.MessageFormat;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -37,8 +45,11 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
      */
     private String lastSessionId;
 
-    SeleniumImpl(String serverHost, int serverPort, String browserStartCommand, String browserURL) {
+    private final Credential credential;
+
+    SeleniumImpl(String serverHost, int serverPort, String browserStartCommand, String browserURL, Credential credential) {
         super(serverHost, serverPort, browserStartCommand, browserURL);
+        this.credential = credential;
     }
 
     @Override
@@ -80,5 +91,39 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
             // failed to retrieve the session ID
         }
         return null;
+    }
+
+    public Credential getCredential() {
+        return credential;
+    }
+
+    public URL getSeleniumServerLogFile() throws IOException {
+        return getFileURL("selenium-server.log");
+    }
+
+    public URL getVideo() throws IOException {
+        return getFileURL("video.flv");
+    }
+
+    private URL getFileURL(String fileName) throws MalformedURLException {
+        // userinfo in URL doesn't result in the BASIC auth, so in this method we won't set the credential.
+        return new URL(MessageFormat.format("https://saucelabs.com/rest/{0}/jobs/{1}/results/{2}",
+                credential.getUsername(), lastSessionId, fileName));
+    }
+
+    public InputStream getSeleniumServerLogFileInputStream() throws IOException {
+        return openWithAuth(getSeleniumServerLogFile());
+    }
+
+    public InputStream getVideoInputStream() throws IOException {
+        return openWithAuth(getVideo());
+    }
+
+    private InputStream openWithAuth(URL url) throws IOException {
+        URLConnection con = url.openConnection();
+        String encodedAuthorization = new BASE64Encoder().encode(
+                (credential.getUsername() + ":" + credential.getKey()).getBytes());
+        con.setRequestProperty("Authorization", "Basic " + encodedAuthorization);
+        return con.getInputStream();
     }
 }

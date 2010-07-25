@@ -82,7 +82,8 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         if (paramMap.get("job-name")==null)
             paramMap.put("job-name",Collections.singletonList(getJobName()));
 
-        return new SeleniumImpl("saucelabs.com",4444, toJSON(paramMap), browserURL);
+        return new SeleniumImpl("saucelabs.com",4444, toJSON(paramMap), browserURL,
+                new Credential(paramMap.get("username").get(0), paramMap.get("access-key").get(0)));
     }
 
     /**
