@@ -23,6 +23,7 @@
       <item name="Logging Driver" href="driver-logging.html"/>
       <item name="Embedded Selenium RC Driver" href="driver-embeddedRC.html"/>
       <item name="HtmlUnit Driver" href="driver-htmlUnit.html"/>
+      <item name="Sauce OnDemand Driver" href="driver-sauceOnDemand.html"/>
       <item name="Writing a New Driver" href="new-driver.html"/>
     </menu>
 

@@ -1,0 +1,28 @@
+  The {{{http://saucelabs.com/}Sauce OnDemand}} driver connects to the online Sauce OnDemand service. This driver recognizes the driver URI of the following structure:
+  
+----------------
+sauce-ondemand:?key=value&key=value&key=value ...
+
+Examples:
+sauce-ondemand:?os=Linux&browser=firefox&browser-version=3.
+----------------
+
+  For more information about the valid key/value pairs and their meanings, refer to {{{http://saucelabs.com/products/docs/sauce-ondemand#json-config}JSON config}} documentation.
+
+
+Handling Credentials
+
+  While you can explicitly specify the username and access key in the URI as <<<username=kohsuke&access-key=xxxxx>>>, this driver supports implicit lookup of the credential through a property file named "~/.sauce-ondemand". This approach is more secure and more portable, as the sensitive information need not be checked into the source code control, and different people can easily have different credentials.
+  
+  This file should contain the following two entries. See {{{http://sauce-rest-api.infradna.com/}this document}} for more about this file:
+   
+----------------
+username=kohsuke
+key=12345678-abcd-cdef-1234-1234567890ab
+----------------
+
+Extensions to Selenium
+
+  The <<<Selenium>>> object returned from this driver will implement additional {{{apidocs/com/saucelabs/sauce_ondemand/driver/SauceOnDemandSelenium.html}<<<SauceOnDemandSelenium>>>}} interface that exposes information specific to Sauce OnDemand.
+  
+  In addition, this driver prints out the session ID to stdout upon connection. This allows the CI servers and other external tools to associate local test reports with remote server logs and video files.
