@@ -109,13 +109,16 @@ public class SeleniumFactory {
     private Map<String,Object> properties = new HashMap<String,Object>();
 
     public SeleniumFactory() {
-        uri = readPropertyOrEnv("SELENIUM_DRIVER");
+        // use the embedded RC as the default, since this is the least environment dependent.
+        uri = readPropertyOrEnv("SELENIUM_DRIVER","embedded-rc:");
     }
 
-    private static String readPropertyOrEnv(String key) {
+    private static String readPropertyOrEnv(String key, String defaultValue) {
         String v = System.getProperty(key);
         if (v==null)
             v = System.getenv(key);
+        if (v==null)
+            v = defaultValue;
         return v;
     }
 
@@ -217,7 +220,7 @@ public class SeleniumFactory {
      * @return never null
      */
     public Selenium createSelenium() {
-        String url = readPropertyOrEnv("SELENIUM_STARTING_URL");
+        String url = readPropertyOrEnv("SELENIUM_STARTING_URL",null);
         if (url==null)
             throw new IllegalArgumentException("Neither SELENIUM_STARTING_URL system property nor environment variable exists");
         return createSelenium(url);
