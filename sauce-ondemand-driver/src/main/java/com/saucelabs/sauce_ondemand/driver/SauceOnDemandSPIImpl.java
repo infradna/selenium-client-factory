@@ -26,8 +26,8 @@ package com.saucelabs.sauce_ondemand.driver;
 import com.saucelabs.rest.Credential;
 import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
-import org.seleniumhq.selenium.client.factory.SeleniumFactory;
-import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.saucelab.selenium.client.client.factory.SeleniumFactory;
+import com.saucelab.selenium.client.client.factory.spi.SeleniumFactorySPI;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;

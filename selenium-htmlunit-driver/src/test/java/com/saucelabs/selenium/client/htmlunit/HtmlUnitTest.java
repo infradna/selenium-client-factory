@@ -25,7 +25,7 @@ package com.saucelabs.selenium.client.htmlunit;
 
 import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
-import org.seleniumhq.selenium.client.factory.SeleniumFactory;
+import com.saucelab.selenium.client.client.factory.SeleniumFactory;
 
 /**
  * @author Kohsuke Kawaguchi

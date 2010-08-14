@@ -28,8 +28,8 @@ import org.kohsuke.MetaInfServices;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.openqa.selenium.server.cli.RemoteControlLauncher;
-import org.seleniumhq.selenium.client.factory.SeleniumFactory;
-import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.saucelab.selenium.client.client.factory.SeleniumFactory;
+import com.saucelab.selenium.client.client.factory.spi.SeleniumFactorySPI;
 
 import java.io.File;
 import java.io.IOException;
