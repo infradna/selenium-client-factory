@@ -4,7 +4,7 @@ Integrating Factory-enabled Tests to Maven
 
 -------------
     <dependency>
-      <groupId>com.saucelabs.selenium.client.client.factory</groupId>
+      <groupId>com.saucelabs.selenium</groupId>
       <artifactId>selenium-client-factory</artifactId>
       <version>1.0</version>
       <scope>test</scope>

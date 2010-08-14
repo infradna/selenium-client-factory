@@ -9,7 +9,7 @@ new DefaultSelenium("localhost", 4444, "Firefox on Windows", ...);
   In the Selenium Grid plugin of Hudson, it's interpreted as a boolean expression that specifies the environment:
 
 -----------------------
-new DefaultSelenium("localhost", 4444, “windows&32bit:*firefox”, ...);
+new DefaultSelenium("localhost", 4444, "windows&32bit:*firefox", ...);
 -----------------------
 
   Sauce OnDemand would take it a lot further by cramming a JSON into it:
