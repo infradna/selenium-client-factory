@@ -26,4 +26,4 @@
  * {@link Selenium} driver that wraps around another driver and logs every commands that go through it.
  * Useful for diagnosing the problems.
  */
-package com.saucelab.selenium.client.client.logging;
+package com.saucelabs.selenium.client.client.logging;

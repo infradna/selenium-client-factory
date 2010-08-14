@@ -25,4 +25,4 @@
 /**
  * SPI implemented by the Selenium drivers to make drivers discoverable.
  */
-package com.saucelab.selenium.client.client.factory.spi;
+package com.saucelabs.selenium.client.client.factory.spi;

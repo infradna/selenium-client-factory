@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.saucelab.selenium.client.client.factory;
+package com.saucelabs.selenium.client.client.factory;
 
 import junit.framework.TestCase;
 

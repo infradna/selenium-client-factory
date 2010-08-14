@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.saucelab.selenium.client.client.logging;
+package com.saucelabs.selenium.client.client.logging;
 
 import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
-import com.saucelab.selenium.client.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.client.factory.SeleniumFactory;
 
 import java.util.ArrayList;
 import java.util.List;

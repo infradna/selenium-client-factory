@@ -26,7 +26,7 @@ package com.saucelabs.sauce_ondemand.driver;
 import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
-import com.saucelab.selenium.client.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.client.factory.SeleniumFactory;
 
 import java.io.IOException;
 

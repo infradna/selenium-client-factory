@@ -21,29 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.saucelab.selenium.client.client.logging;
+package com.saucelabs.selenium.client.client.logging;
 
 import com.thoughtworks.selenium.Selenium;
+import org.kohsuke.MetaInfServices;
+import com.saucelabs.selenium.client.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.client.factory.spi.SeleniumFactorySPI;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.lang.reflect.Proxy;
 
 /**
- * {@link Selenium} returned from "log:..." URI will implement this interface
- * to let you control its logging behavior.
+ * {@link SeleniumFactorySPI} that handles "log:...".
  *
  * @author Kohsuke Kawaguchi
  */
-public interface LoggingSelenium {
-    void setLogger(Logger logger);
-    Logger getLogger();
+@MetaInfServices
+public class LoggingSeleniumSPIImpl extends SeleniumFactorySPI {
+    @Override
+    public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
+        String uri = factory.getUri();
+        if (!uri.startsWith("log:"))       return null;    // not our URL
 
-    void setLogLevel(Level level);
-    Level getLogLevel();
+        Selenium base = factory.clone().setUri(uri.substring(4)).createSelenium(browserURL);
+        return createLoggingSelenium(base);
+    }
 
-    Selenium getBaseDriver();
-    void setBaseDriver(Selenium selenium);
-
-    String getId();
-    void setId(String id);
+    /**
+     * Creates a logging selenium around the given Selenium driver.
+     */
+    public static Selenium createLoggingSelenium(Selenium base) {
+        return (Selenium) Proxy.newProxyInstance(LoggingSelenium.class.getClassLoader(),
+                new Class[]{LoggingSelenium.class, Selenium.class},
+                new LoggingSeleniumProxy(base));
+    }
 }

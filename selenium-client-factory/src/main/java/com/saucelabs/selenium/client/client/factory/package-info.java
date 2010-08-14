@@ -25,6 +25,6 @@
 /**
  * Factory abstraction for {@link Selenium} to reduce hard-coding of the information.
  */
-package com.saucelab.selenium.client.client.factory;
+package com.saucelabs.selenium.client.client.factory;
 
 import com.thoughtworks.selenium.Selenium;
