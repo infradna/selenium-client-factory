@@ -37,3 +37,4 @@ Using Environment Variables
 exec ant
 -----------------------
 
+  A similar approach is also effective when you run Ant interactively from your shell. 

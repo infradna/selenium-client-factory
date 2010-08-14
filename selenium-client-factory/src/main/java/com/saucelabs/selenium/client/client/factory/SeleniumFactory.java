@@ -110,7 +110,7 @@ public class SeleniumFactory {
 
     public SeleniumFactory() {
         // use the embedded RC as the default, since this is the least environment dependent.
-        uri = readPropertyOrEnv("SELENIUM_DRIVER","embedded-rc:");
+        uri = readPropertyOrEnv("SELENIUM_DRIVER",readPropertyOrEnv("DEFAULT_SELENIUM_DRIVER","embedded-rc:"));
     }
 
     private static String readPropertyOrEnv(String key, String defaultValue) {
@@ -220,7 +220,7 @@ public class SeleniumFactory {
      * @return never null
      */
     public Selenium createSelenium() {
-        String url = readPropertyOrEnv("SELENIUM_STARTING_URL",null);
+        String url = readPropertyOrEnv("SELENIUM_STARTING_URL",readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL",null));
         if (url==null)
             throw new IllegalArgumentException("Neither SELENIUM_STARTING_URL system property nor environment variable exists");
         return createSelenium(url);

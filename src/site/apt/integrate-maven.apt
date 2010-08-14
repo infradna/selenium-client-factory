@@ -22,20 +22,9 @@ Integrating Factory-enabled Tests to Maven
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemProperties>
-            <SELENIUM_DRIVER>${SELENIUM_DRIVER}</SELENIUM_DRIVER>
-            <SELENIUM_STARTING_URL>${SELENIUM_STARTING_URL}</SELENIUM_STARTING_URL>
+            <DEFAULT_SELENIUM_DRIVER>embedded-rc:</DEFAULT_SELENIUM_DRIVER>
+            <DEFAULT_SELENIUM_STARTING_URL>http://localhost:8080/</DEFAULT_SELENIUM_STARTING_URL>
    ...
-               
-  <properties>
-    <SELENIUM_DRIVER>embedded-rc:</SELENIUM_DRIVER>
-    <SELENIUM_STARTING_URL>http://localhost:8080/</SELENIUM_STARTING_URL>
-  </properties>
 -------------
 
-  Individual users can then override those values with the "-D" option when invoking Maven.
-
-
-Using Environment Variables
-
-  Refer to the "Using Environment Variables" section of the "{{{integrate-ant.html}Integrate to Ant}}" page for more about how to use environment variables.
-
+  Individual users can then override those values by setting "SELENIUM_DRIVER=..." and "SELENIUM_STARTING_URL=..." environment variables when invoking Maven, like <<<SELENIUM_DRIVER=http://server:4444/ mvn test>>>
