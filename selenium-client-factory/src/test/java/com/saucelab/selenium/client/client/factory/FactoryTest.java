@@ -21,29 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.seleniumhq.selenium.client.logging;
+package com.saucelab.selenium.client.client.factory;
 
-import com.thoughtworks.selenium.Selenium;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import junit.framework.TestCase;
 
 /**
- * {@link Selenium} returned from "log:..." URI will implement this interface
- * to let you control its logging behavior.
- *
  * @author Kohsuke Kawaguchi
  */
-public interface LoggingSelenium {
-    void setLogger(Logger logger);
-    Logger getLogger();
+public class FactoryTest extends TestCase {
+    public void test1() {
+        assertNotNull(SeleniumFactory.create("http://no.such.host:4444/*firefox","http://www.google.com/"));
+    }
 
-    void setLogLevel(Level level);
-    Level getLogLevel();
-
-    Selenium getBaseDriver();
-    void setBaseDriver(Selenium selenium);
-
-    String getId();
-    void setId(String id);
+    public void testFailedInstantiation() {
+        try {
+            SeleniumFactory.create("bogus:uri","http://www.google.com/");
+            fail("Expected to fail");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            // success
+        }
+    }
 }

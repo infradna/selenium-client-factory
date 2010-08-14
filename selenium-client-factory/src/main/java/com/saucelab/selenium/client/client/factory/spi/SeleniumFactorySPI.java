@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.seleniumhq.selenium.client.factory.spi;
+package com.saucelab.selenium.client.client.factory.spi;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
-import org.seleniumhq.selenium.client.factory.SeleniumFactory;
+import com.saucelab.selenium.client.client.factory.SeleniumFactory;
 
 /**
  * SPI implemented by the {@link Selenium} driver implementation providers.

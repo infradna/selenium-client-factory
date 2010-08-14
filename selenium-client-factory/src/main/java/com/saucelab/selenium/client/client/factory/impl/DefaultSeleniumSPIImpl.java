@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.seleniumhq.selenium.client.factory.impl;
+package com.saucelab.selenium.client.client.factory.impl;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
-import org.seleniumhq.selenium.client.factory.SeleniumFactory;
-import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.saucelab.selenium.client.client.factory.SeleniumFactory;
+import com.saucelab.selenium.client.client.factory.spi.SeleniumFactorySPI;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;

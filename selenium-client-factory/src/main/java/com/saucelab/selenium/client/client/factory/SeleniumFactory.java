@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.seleniumhq.selenium.client.factory;
+package com.saucelab.selenium.client.client.factory;
 
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
-import org.seleniumhq.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.saucelab.selenium.client.client.factory.spi.SeleniumFactorySPI;
 
 import java.io.BufferedReader;
 import java.io.IOException;

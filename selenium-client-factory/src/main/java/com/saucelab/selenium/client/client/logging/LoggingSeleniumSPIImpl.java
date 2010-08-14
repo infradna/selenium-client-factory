@@ -21,25 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.seleniumhq.selenium.client.factory;
+package com.saucelab.selenium.client.client.logging;
 
-import junit.framework.TestCase;
+import com.thoughtworks.selenium.Selenium;
+import org.kohsuke.MetaInfServices;
+import com.saucelab.selenium.client.client.factory.SeleniumFactory;
+import com.saucelab.selenium.client.client.factory.spi.SeleniumFactorySPI;
+
+import java.lang.reflect.Proxy;
 
 /**
+ * {@link SeleniumFactorySPI} that handles "log:...".
+ *
  * @author Kohsuke Kawaguchi
  */
-public class FactoryTest extends TestCase {
-    public void test1() {
-        assertNotNull(SeleniumFactory.create("http://no.such.host:4444/*firefox","http://www.google.com/"));
+@MetaInfServices
+public class LoggingSeleniumSPIImpl extends SeleniumFactorySPI {
+    @Override
+    public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
+        String uri = factory.getUri();
+        if (!uri.startsWith("log:"))       return null;    // not our URL
+
+        Selenium base = factory.clone().setUri(uri.substring(4)).createSelenium(browserURL);
+        return createLoggingSelenium(base);
     }
 
-    public void testFailedInstantiation() {
-        try {
-            SeleniumFactory.create("bogus:uri","http://www.google.com/");
-            fail("Expected to fail");
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            // success
-        }
+    /**
+     * Creates a logging selenium around the given Selenium driver.
+     */
+    public static Selenium createLoggingSelenium(Selenium base) {
+        return (Selenium) Proxy.newProxyInstance(LoggingSelenium.class.getClassLoader(),
+                new Class[]{LoggingSelenium.class, Selenium.class},
+                new LoggingSeleniumProxy(base));
     }
 }

@@ -23,7 +23,6 @@
  */
 
 /**
- * {@link Selenium} driver that wraps around another driver and logs every commands that go through it.
- * Useful for diagnosing the problems.
+ * SPI implemented by the Selenium drivers to make drivers discoverable.
  */
-package org.seleniumhq.selenium.client.logging;
+package com.saucelab.selenium.client.client.factory.spi;
