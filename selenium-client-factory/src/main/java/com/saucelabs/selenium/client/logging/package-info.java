@@ -21,25 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.saucelabs.selenium.client.client.factory;
-
-import junit.framework.TestCase;
 
 /**
- * @author Kohsuke Kawaguchi
+ * {@link Selenium} driver that wraps around another driver and logs every commands that go through it.
+ * Useful for diagnosing the problems.
  */
-public class FactoryTest extends TestCase {
-    public void test1() {
-        assertNotNull(SeleniumFactory.create("http://no.such.host:4444/*firefox","http://www.google.com/"));
-    }
-
-    public void testFailedInstantiation() {
-        try {
-            SeleniumFactory.create("bogus:uri","http://www.google.com/");
-            fail("Expected to fail");
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            // success
-        }
-    }
-}
+package com.saucelabs.selenium.client.logging;

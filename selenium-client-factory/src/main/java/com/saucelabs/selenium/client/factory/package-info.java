@@ -23,6 +23,8 @@
  */
 
 /**
- * SPI implemented by the Selenium drivers to make drivers discoverable.
+ * Factory abstraction for {@link Selenium} to reduce hard-coding of the information.
  */
-package com.saucelabs.selenium.client.client.factory.spi;
+package com.saucelabs.selenium.client.factory;
+
+import com.thoughtworks.selenium.Selenium;

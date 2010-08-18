@@ -21,9 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.saucelabs.selenium.client.logging;
+
+import com.thoughtworks.selenium.Selenium;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * {@link Selenium} driver that wraps around another driver and logs every commands that go through it.
- * Useful for diagnosing the problems.
+ * {@link Selenium} returned from "log:..." URI will implement this interface
+ * to let you control its logging behavior.
+ *
+ * @author Kohsuke Kawaguchi
  */
-package com.saucelabs.selenium.client.client.logging;
+public interface LoggingSelenium {
+    void setLogger(Logger logger);
+    Logger getLogger();
+
+    void setLogLevel(Level level);
+    Level getLogLevel();
+
+    Selenium getBaseDriver();
+    void setBaseDriver(Selenium selenium);
+
+    String getId();
+    void setId(String id);
+}

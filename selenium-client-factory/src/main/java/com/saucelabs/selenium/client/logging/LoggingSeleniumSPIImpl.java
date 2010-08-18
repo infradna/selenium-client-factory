@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.saucelabs.selenium.client.client.logging;
+package com.saucelabs.selenium.client.logging;
 
 import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
-import com.saucelabs.selenium.client.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.client.factory.spi.SeleniumFactorySPI;
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
 
 import java.lang.reflect.Proxy;
 

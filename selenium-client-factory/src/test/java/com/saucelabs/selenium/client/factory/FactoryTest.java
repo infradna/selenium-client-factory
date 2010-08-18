@@ -21,10 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package com.saucelabs.selenium.client.factory;
+
+import junit.framework.TestCase;
 
 /**
- * Factory abstraction for {@link Selenium} to reduce hard-coding of the information.
+ * @author Kohsuke Kawaguchi
  */
-package com.saucelabs.selenium.client.client.factory;
+public class FactoryTest extends TestCase {
+    public void test1() {
+        assertNotNull(SeleniumFactory.create("http://no.such.host:4444/*firefox","http://www.google.com/"));
+    }
 
-import com.thoughtworks.selenium.Selenium;
+    public void testFailedInstantiation() {
+        try {
+            SeleniumFactory.create("bogus:uri","http://www.google.com/");
+            fail("Expected to fail");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            // success
+        }
+    }
+}

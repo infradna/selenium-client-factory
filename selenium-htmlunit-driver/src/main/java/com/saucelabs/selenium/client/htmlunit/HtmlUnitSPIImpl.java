@@ -25,8 +25,8 @@ package com.saucelabs.selenium.client.htmlunit;
 
 import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
-import com.saucelabs.selenium.client.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.client.factory.spi.SeleniumFactorySPI;
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
 
 /**
  * @author Kohsuke Kawaguchi
