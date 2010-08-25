@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.saucelabs.selenium</groupId>
+    <artifactId>selenium-client-factory-parent</artifactId>
+    <version>1.3-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>demo-project</artifactId>
+  <name>Demo project</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>selenium-client-factory</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>selenium-embedded-rc-driver</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sauce-ondemand-driver</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <forkMode>never</forkMode>
+          <systemPropertyVariables>
+            <DEFAULT_SELENIUM_DRIVER>embedded-rc:</DEFAULT_SELENIUM_DRIVER>
+            <DEFAULT_SELENIUM_STARTING_URL>http://www.google.com/</DEFAULT_SELENIUM_STARTING_URL>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
