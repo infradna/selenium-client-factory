@@ -5,11 +5,12 @@ import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
 
 public class AppTest extends TestCase {
-    public void test1() {
+    public void test1() throws InterruptedException {
         Selenium s = SeleniumFactory.create();
         s.start();
         s.open("/");
         System.out.println(s.getTitle());
-        s.close();
+        Thread.sleep(3000); // manually induced delay, or else the window closes too fast
+        s.stop();
     }
 }

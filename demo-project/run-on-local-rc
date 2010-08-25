@@ -1,0 +1,2 @@
+#!/bin/bash -ex
+SELENIUM_DRIVER='http://localhost:4444/*googlechrome' "$@"
