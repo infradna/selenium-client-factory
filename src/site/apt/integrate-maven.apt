@@ -22,8 +22,14 @@ Integrating Factory-enabled Tests to Maven
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemProperties>
-            <DEFAULT_SELENIUM_DRIVER>embedded-rc:</DEFAULT_SELENIUM_DRIVER>
-            <DEFAULT_SELENIUM_STARTING_URL>http://localhost:8080/</DEFAULT_SELENIUM_STARTING_URL>
+            <property>
+              <name>DEFAULT_SELENIUM_DRIVER</name>
+              <value>embedded-rc:</value>
+            </property>
+            <property>
+              <name>DEFAULT_SELENIUM_STARTING_URL</name>
+              <value>http://localhost:8080/</value>
+            </property>
    ...
 -------------
 
