@@ -222,7 +222,7 @@ public class SeleniumFactory {
     public Selenium createSelenium() {
         String url = readPropertyOrEnv("SELENIUM_STARTING_URL",readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL",null));
         if (url==null)
-            throw new IllegalArgumentException("Neither SELENIUM_STARTING_URL system property nor environment variable exists");
+            throw new IllegalArgumentException("Neither SELENIUM_STARTING_URL/DEFAULT_SELENIUM_STARTING_URL system property nor environment variable exists");
         return createSelenium(url);
     }
 
