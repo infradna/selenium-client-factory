@@ -82,8 +82,12 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         if (paramMap.get("job-name")==null)
             paramMap.put("job-name",Collections.singletonList(getJobName()));
 
-        return new SeleniumImpl("saucelabs.com",4444, toJSON(paramMap), browserURL,
-                new Credential(paramMap.get("username").get(0), paramMap.get("access-key").get(0)));
+        return new SeleniumImpl(
+                "saucelabs.com",4444,
+                toJSON(paramMap),
+                browserURL,
+                new Credential(paramMap.get("username").get(0), paramMap.get("access-key").get(0)),
+                paramMap.get("job-name").get(0));
     }
 
     /**
@@ -91,18 +95,15 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
      */
     public String getJobName() {
         // look for the caller of SeleniumFactory
-        StackTraceElement[] trace = new Exception().getStackTrace();
+        StackTraceElement[] trace = Thread.currentThread().getStackTrace();
         boolean foundFactory = false;
         String callerName = null;
         for (StackTraceElement e : trace) {
             if (foundFactory)
-                callerName = e.toString();
+                callerName = e.getClassName() + "." + e.getMethodName();
             foundFactory = e.getClassName().equals(SeleniumFactory.class.getName());
         }
-
-        String vmName = ManagementFactory.getRuntimeMXBean().getName();
-
-        return callerName+" on "+vmName;
+        return callerName;
     }
 
     /**

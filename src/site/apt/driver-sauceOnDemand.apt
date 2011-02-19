@@ -25,4 +25,4 @@ Extensions to Selenium
 
   The <<<Selenium>>> object returned from this driver will implement additional {{{apidocs/com/saucelabs/sauce_ondemand/driver/SauceOnDemandSelenium.html}<<<SauceOnDemandSelenium>>>}} interface that exposes information specific to Sauce OnDemand.
   
-  In addition, this driver prints out the session ID to stdout upon connection. This allows the CI servers and other external tools to associate local test reports with remote server logs and video files.
+  In addition, this driver prints out the session ID and job name to stdout upon connection. This allows the CI servers and other external tools to associate local test reports with test sessions, to allow for {{{http://saucelabs.com/docs/sauce-ondemand#embedding-job}embedding of test reports}}.

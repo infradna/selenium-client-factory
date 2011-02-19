@@ -45,11 +45,14 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
      */
     private String lastSessionId;
 
+    private String jobName;
+
     private final Credential credential;
 
-    SeleniumImpl(String serverHost, int serverPort, String browserStartCommand, String browserURL, Credential credential) {
+    SeleniumImpl(String serverHost, int serverPort, String browserStartCommand, String browserURL, Credential credential, String jobName) {
         super(serverHost, serverPort, browserStartCommand, browserURL);
         this.credential = credential;
+        this.jobName = jobName;
     }
 
     @Override
@@ -75,7 +78,7 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
      */
     private void dumpSessionId() {
         lastSessionId = getSessionId();
-        System.out.println("SauceOnDemandSessionID="+lastSessionId);
+        System.out.println("SauceOnDemandSessionID=" + lastSessionId + " job-name=" + jobName);
     }
     
     public String getSessionId() {
