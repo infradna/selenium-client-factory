@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.saucelabs.selenium</groupId>
   <artifactId>selenium-client-factory-parent</artifactId>
-  <version>1.3</version>
+  <version>1.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>selenium-client-factory super POM</name>
   <description>Making Selenium tests more reusable</description>
