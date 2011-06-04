@@ -44,7 +44,7 @@ public class SauceOnDemandTest extends TestCase {
 
         SauceOnDemandSelenium ss = (SauceOnDemandSelenium) s;
         assertNotNull(ss.getSessionIdValue());
-
+        ss.jobPassed();
         s.stop();
 
         Thread.sleep(15000);
@@ -60,7 +60,7 @@ public class SauceOnDemandTest extends TestCase {
 
         SauceOnDemandSelenium ss = (SauceOnDemandSelenium) s;
         assertNotNull(ss.getSessionIdValue());
-
+        ss.jobPassed();
         s.quit();
 
         Thread.sleep(15000);

@@ -19,16 +19,11 @@
       -->
       <optional>true</optional>
     </dependency>
+
     <dependency>
-      <groupId>org.seleniumhq.selenium.server</groupId>
-      <artifactId>selenium-server</artifactId>
-      <version>1.0.3</version>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-common</artifactId>
-      <version>2.0a2</version>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-server</artifactId>
+        <version>2.0b3</version>
     </dependency>
   </dependencies>
 </project>

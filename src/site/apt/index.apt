@@ -65,6 +65,8 @@ Available Drivers
   
   * {{{driver-htmlUnit.html}Proof-of-concept HTMLUnit Driver}} that uses HTMLUnit as a in-memory headless browser.
 
+  * {{{driver-sauceOnDemand.html}Sauce OnDemand Driver}} that instantiates <<DefaultSelenium>> and talks to a Sauce OnDemand instance.
+
   []
 
 

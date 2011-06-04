@@ -1,6 +1,8 @@
 package com.saucelabs.sauce_ondemand.driver;
 
 import com.saucelabs.rest.Credential;
+import com.saucelabs.rest.JobFactory;
+import com.saucelabs.rest.UpdateJob;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -13,6 +15,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Ross Rowe
@@ -84,6 +88,23 @@ class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, SauceOnD
         return openWithAuth(getVideo());
     }
 
+   public void jobPassed() throws IOException {
+        Map<String, Object> updates = new HashMap<String, Object>();
+        updates.put("passed", true);
+        updateJobInfo(updates);
+    }
+
+    private void updateJobInfo(Map<String,Object> updates) throws IOException {
+        JobFactory jobFactory = new JobFactory(credential);
+        jobFactory.update(getSessionIdValue(), updates);
+    }
+
+    public void jobFailed() throws IOException {
+        Map<String, Object> updates = new HashMap<String, Object>();
+        updates.put("passed", true);
+        updateJobInfo(updates);
+    }
+
     private InputStream openWithAuth(URL url) throws IOException {
         URLConnection con = url.openConnection();
         String encodedAuthorization = new BASE64Encoder().encode(
@@ -91,4 +112,11 @@ class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, SauceOnD
         con.setRequestProperty("Authorization", "Basic " + encodedAuthorization);
         return con.getInputStream();
     }
+
+    public void setBuildNumber(String buildNumber) throws IOException {
+        Map<String, Object> updates = new HashMap<String, Object>();
+        updates.put("build", buildNumber);
+        updateJobInfo(updates);
+    }
+
 }

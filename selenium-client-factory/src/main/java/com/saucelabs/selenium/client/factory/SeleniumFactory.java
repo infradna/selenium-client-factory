@@ -44,7 +44,7 @@ import static java.util.logging.Level.WARNING;
  * Factory of {@link Selenium}.
  *
  * <p>
- * Compared to directly initializing {@link DefaultSelenium}, this additional indirection
+ * Compared to directly initializing {@link com.thoughtworks.selenium.DefaultSelenium}, this additional indirection
  * allows the build script or a CI server to control how you connect to the selenium.
  * This makes it easier to run the same set of tests in different environments without
  * modifying the test code.
@@ -127,7 +127,6 @@ public class SeleniumFactory {
      * @param driverUri
      *      The URI indicating the Selenium driver to be instantiated.
      * @param browserURL
-     *      See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
      *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
      */
     public static WebDriver createWebDriver(String driverUri, String browserURL) {
@@ -257,7 +256,6 @@ public class SeleniumFactory {
     }
 
     public Selenium createSelenium(String browserURL) {
-
         SeleniumFactorySPI seleniumFactory = createSeleniumFactory();
         Selenium selenium = seleniumFactory.createSelenium(this, browserURL);
         if (selenium == null) {
@@ -266,7 +264,17 @@ public class SeleniumFactory {
         } else {
             return selenium;
         }
+    }
 
+    public WebDriver createWebDriver(String browserURL) {
+        SeleniumFactorySPI seleniumFactory = createSeleniumFactory();
+        WebDriver webDriver = seleniumFactory.createWebDriver(this, browserURL);
+        if (webDriver == null) {
+            throw new IllegalArgumentException(String.format(
+                    "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));
+        } else {
+            return webDriver;
+        }
     }
 
     /**
@@ -341,14 +349,4 @@ public class SeleniumFactory {
 
     private static final Logger LOGGER = Logger.getLogger(SeleniumFactory.class.getName());
 
-    public WebDriver createWebDriver(String browserURL) {
-        SeleniumFactorySPI seleniumFactory = createSeleniumFactory();
-        WebDriver webDriver = seleniumFactory.createWebDriver(this, browserURL);
-        if (webDriver == null) {
-            throw new IllegalArgumentException(String.format(
-                    "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));
-        } else {
-            return webDriver;
-        }
-    }
 }

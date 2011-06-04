@@ -28,7 +28,7 @@ import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import org.openqa.selenium.WebDriver;
 
 /**
- * SPI implemented by the {@link Selenium} driver implementation providers.
+ * SPI implemented by the {@link Selenium} and {@link WebDriver} implementation providers.
  *
  * <p>
  * Concrete implementations of this SPI must have a public no-argument constructor.
@@ -68,14 +68,13 @@ public abstract class SeleniumFactorySPI {
      * Instantiates the driver.
      *
      * <p>
-     * This method is invoked in response to {@link SeleniumFactory#createSelenium()} to actually
+     * This method is invoked in response to {@link com.saucelabs.selenium.client.factory.SeleniumFactory#createWebDriver()} ()} to actually
      * instantiate the driver.
      *
      * @param factory
      *      The factory that captures the configuration that the calling user application is looking for.
      *      Never null.
      * @param browserURL
-     *      See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
      *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
      *
      * @return
@@ -90,9 +89,9 @@ public abstract class SeleniumFactorySPI {
     public abstract WebDriver createWebDriver(SeleniumFactory factory,String browserURL);
 
     /**
-     * Returns boolean indicating whether the Factory instance can handle the incoming browserURL.
-     * @param browserURL
-     * @return
+     * Returns boolean indicating whether the Factory instance can handle the incoming URI.
+     * @param uri URI to check
+     * @return boolean that indicates whether the Factory can handle the incoming URI
      */
-    public abstract boolean canHandle(String browserURL);
+    public abstract boolean canHandle(String uri);
 }
