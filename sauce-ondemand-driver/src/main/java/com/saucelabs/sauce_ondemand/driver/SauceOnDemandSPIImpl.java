@@ -28,9 +28,15 @@ import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import org.openqa.selenium.Platform;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,13 +54,23 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
         String uri = factory.getUri();
-        if (!uri.startsWith(SCHEME))
+        if (!canHandle(uri))
             return null; // not ours
 
         uri = uri.substring(SCHEME.length());
         if (!uri.startsWith("?"))
             throw new IllegalArgumentException("Missing '?':"+factory.getUri());
+        Map<String, List<String>> paramMap = populateParameterMap(uri);
 
+        return new SeleniumImpl(
+                "saucelabs.com",4444,
+                toJSON(paramMap),
+                browserURL,
+                new Credential(paramMap.get("username").get(0), paramMap.get("access-key").get(0)),
+                paramMap.get("job-name").get(0));
+    }
+
+    private Map<String, List<String>> populateParameterMap(String uri) {
         // massage parameter into JSON format
         Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
         for (String param : uri.substring(1).split("&")) {
@@ -81,13 +97,57 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
 
         if (paramMap.get("job-name")==null)
             paramMap.put("job-name",Collections.singletonList(getJobName()));
+        return paramMap;
+    }
 
-        return new SeleniumImpl(
-                "saucelabs.com",4444,
-                toJSON(paramMap),
-                browserURL,
-                new Credential(paramMap.get("username").get(0), paramMap.get("access-key").get(0)),
-                paramMap.get("job-name").get(0));
+    @Override
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL) {
+
+        String uri = factory.getUri();
+        if (!uri.startsWith(SCHEME))
+            return null; // not ours
+
+        uri = uri.substring(SCHEME.length());
+        if (!uri.startsWith("?"))
+            throw new IllegalArgumentException("Missing '?':"+factory.getUri());
+
+        // massage parameter into JSON format
+        Map<String, List<String>> paramMap = populateParameterMap(uri);
+
+        DesiredCapabilities desiredCapabilities;
+        if (hasParameter(paramMap, "os") &&
+                hasParameter(paramMap,"browser") &&
+                hasParameter(paramMap, "browser-version")) {
+            desiredCapabilities = new DesiredCapabilities(
+                    getFirstParameter(paramMap, "browser"),
+                    getFirstParameter(paramMap, "browser-version"),
+                    Platform.extractFromSysProperty(getFirstParameter(paramMap, "os")));
+        } else {
+            //use Firefox as a default
+            desiredCapabilities = DesiredCapabilities.firefox();
+        }
+
+        try {
+            WebDriver driver = new RemoteWebDriverImpl(
+                    new URL(
+                            MessageFormat.format(
+                                    "http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub",
+                                    getFirstParameter(paramMap,"username"),
+                                    getFirstParameter(paramMap,"access-key"))),
+                            desiredCapabilities,
+                    new Credential(getFirstParameter(paramMap,"username"), getFirstParameter(paramMap,"access-key")),
+                    getFirstParameter(paramMap,"job-name"));
+
+            driver.get(browserURL);
+            return driver;
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL: "+factory.getUri(),e);
+        }
+    }
+
+    @Override
+    public boolean canHandle(String uri) {
+        return uri.startsWith(SCHEME);
     }
 
     /**
@@ -131,6 +191,16 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         }
         buf.append('}');
         return buf.toString();
+    }
+
+    private String getFirstParameter(Map<String, List<String>> paramMap, String parameterName) {
+        List<String> values = paramMap.get(parameterName);
+        return values.get(0);
+    }
+
+    private boolean hasParameter(Map<String, List<String>> paramMap, String parameterName) {
+        List<String> values = paramMap.get(parameterName);
+        return values != null && !values.isEmpty();
     }
 
     private static final String SCHEME = "sauce-ondemand:";

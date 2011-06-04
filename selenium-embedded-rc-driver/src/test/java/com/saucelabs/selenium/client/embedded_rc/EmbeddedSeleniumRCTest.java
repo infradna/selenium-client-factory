@@ -26,16 +26,23 @@ package com.saucelabs.selenium.client.embedded_rc;
 import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import org.openqa.selenium.WebDriver;
 
 /**
  * @author Kohsuke Kawaguchi
  */
 public class EmbeddedSeleniumRCTest extends TestCase {
-    public void test1() {
+    public void testSelenium() {
         Selenium s = SeleniumFactory.create("embedded-rc:*firefox", "http://www.google.com/");
         s.start();
         s.open("/");
         assertEquals("Google",s.getTitle());
         s.stop();
+    }
+
+    public void testWebDriver() {
+        WebDriver s = SeleniumFactory.createWebDriver("embedded-rc:*firefox", "http://www.google.com/");        
+        assertEquals("Google",s.getTitle());
+        s.quit();
     }
 }

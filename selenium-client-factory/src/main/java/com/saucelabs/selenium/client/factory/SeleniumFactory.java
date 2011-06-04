@@ -23,9 +23,9 @@
  */
 package com.saucelabs.selenium.client.factory;
 
-import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import org.openqa.selenium.WebDriver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,6 +72,20 @@ public class SeleniumFactory {
 
     /**
      * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
+     * and run the test against the domain specified in 'SELENIUM_STARTING_URL' system property or the environment variable.
+     *
+     * <p>
+     * If exists, the system property takes precedence over the environment variable.
+     *
+     * <p>
+     * This is just a convenient short-cut for {@code new SeleniumFactory().createWebDriver()}.
+     */
+    public static WebDriver createWebDriver() {
+        return new SeleniumFactory().createWebDriver();
+    }
+
+    /**
+     * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
      * and run the test against the specified domain.
      *
      * <p>
@@ -102,6 +116,22 @@ public class SeleniumFactory {
      */
     public static Selenium create(String driverUri, String browserURL) {
         return new SeleniumFactory().setUri(driverUri).createSelenium(browserURL);
+    }
+
+    /**
+     * Uses the specified driver and the test domain and create a WebDriver instance.
+     *
+     * <p>
+     * This is just a convenient short-cut for {@code new SeleniumFactory().setUri(driverUri).createSelenium(browserURL)}.
+     *
+     * @param driverUri
+     *      The URI indicating the Selenium driver to be instantiated.
+     * @param browserURL
+     *      See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
+     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     */
+    public static WebDriver createWebDriver(String driverUri, String browserURL) {
+        return new SeleniumFactory().setUri(driverUri).createWebDriver(browserURL);
     }
 
     private String uri;
@@ -226,6 +256,19 @@ public class SeleniumFactory {
         return createSelenium(url);
     }
 
+    public Selenium createSelenium(String browserURL) {
+
+        SeleniumFactorySPI seleniumFactory = createSeleniumFactory();
+        Selenium selenium = seleniumFactory.createSelenium(this, browserURL);
+        if (selenium == null) {
+            throw new IllegalArgumentException(String.format(
+                    "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));
+        } else {
+            return selenium;
+        }
+
+    }
+
     /**
      * Based on the current configuration, instantiate a Selenium driver
      * and returns it.
@@ -234,12 +277,13 @@ public class SeleniumFactory {
      *      if the configuration is invalid, or the driver failed to instantiate.
      * @return never null
      */
-    public Selenium createSelenium(String browserURL) {
+    private SeleniumFactorySPI createSeleniumFactory() {
         try {
             if (uri==null)
                 throw new IllegalArgumentException("Selenium driver URI is not set");
 
             Enumeration<URL> e = cl.getResources("META-INF/services/" + SeleniumFactorySPI.class.getName());
+            SeleniumFactorySPI seleniumFactory = null;
             while (e.hasMoreElements()) {
                 URL url = e.nextElement();
                 LOGGER.fine("Reading "+url+" looking for "+SeleniumFactorySPI.class.getName());
@@ -257,15 +301,14 @@ public class SeleniumFactory {
                             LOGGER.fine("Loaded "+c);
 
                             Object _spi = c.newInstance();
+                            boolean canHandleRequest = false;
                             if (_spi instanceof SeleniumFactorySPI) {
-                                SeleniumFactorySPI spi = (SeleniumFactorySPI) _spi;
-
-                                // if this throws an exception, that's a fatal error and we'll abort
-                                Selenium selenium = spi.createSelenium(this, browserURL);
-                                if (selenium!=null)
-                                    return selenium;
-                                // if the SPI returns null, we'll try next one
-                            } else {
+                                seleniumFactory = (SeleniumFactorySPI) _spi;
+                                if (seleniumFactory.canHandle(uri)) {
+                                    return seleniumFactory;
+                                }
+                            }
+                            if (!canHandleRequest) {
                                 URL img = c.getClassLoader().getResource(SeleniumFactorySPI.class.getName().replace('.','/')+".class");
                                 LOGGER.log(WARNING, url+" specifies an SPI class "+line+" but the class isn't assignable to "+SeleniumFactorySPI.class+". It's loading SPI from "+img);
                             }
@@ -283,13 +326,29 @@ public class SeleniumFactory {
                 }
             }
 
-            throw new IllegalArgumentException(String.format(
+            if (seleniumFactory == null) {
+                throw new IllegalArgumentException(String.format(
                     "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));
+            } else {
+                return seleniumFactory;
+            }
 
         } catch (IOException x) {
             throw new IllegalArgumentException("Failed to instantiate the driver",x);
         }
+
     }
 
     private static final Logger LOGGER = Logger.getLogger(SeleniumFactory.class.getName());
+
+    public WebDriver createWebDriver(String browserURL) {
+        SeleniumFactorySPI seleniumFactory = createSeleniumFactory();
+        WebDriver webDriver = seleniumFactory.createWebDriver(this, browserURL);
+        if (webDriver == null) {
+            throw new IllegalArgumentException(String.format(
+                    "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));
+        } else {
+            return webDriver;
+        }
+    }
 }

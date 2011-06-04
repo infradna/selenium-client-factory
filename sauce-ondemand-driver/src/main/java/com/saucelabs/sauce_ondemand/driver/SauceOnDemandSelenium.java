@@ -35,18 +35,18 @@ import java.net.URL;
  *
  * @author Kohsuke Kawaguchi
  */
-public interface SauceOnDemandSelenium extends Selenium {
+public interface SauceOnDemandSelenium {
     /**
      * Obtains the session ID of this Selenium.
      *
      * <p>
-     * If the session has ended via {@link #stop()},
+     * If the session has ended via {@link Selenium#stop()},
      * this method returns the session ID of the last session.
      *
      * @return null
      *      if the session hasn't started yet.
      */
-    String getSessionId();
+    String getSessionIdValue();
 
     /**
      * Gets the credential used to connect to Sauce OnDemand.

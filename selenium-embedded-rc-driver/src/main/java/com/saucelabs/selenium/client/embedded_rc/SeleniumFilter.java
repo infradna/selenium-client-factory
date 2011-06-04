@@ -213,6 +213,10 @@ public class SeleniumFilter implements Selenium {
         return base.getSpeed();
     }
 
+    public String getLog() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void check(String locator) {
         base.check(locator);
     }
@@ -239,6 +243,10 @@ public class SeleniumFilter implements Selenium {
 
     public void submit(String formLocator) {
         base.submit(formLocator);
+    }
+
+    public void open(String s, String s1) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void open(String url) {
@@ -519,6 +527,10 @@ public class SeleniumFilter implements Selenium {
 
     public Number getXpathCount(String xpath) {
         return base.getXpathCount(xpath);
+    }
+
+    public Number getCssCount(String s) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void assignId(String locator, String identifier) {

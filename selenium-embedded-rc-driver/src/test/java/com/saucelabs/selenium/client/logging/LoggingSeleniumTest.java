@@ -26,6 +26,7 @@ package com.saucelabs.selenium.client.logging;
 import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ import java.util.logging.Logger;
 public class LoggingSeleniumTest extends TestCase {
     private List<LogRecord> logs = new ArrayList<LogRecord>();
 
-    public void test1() {
+    public void testSelenium() {
         Selenium s = SeleniumFactory.create("log:embedded-rc:*firefox", "http://www.google.com/");
 
         LoggingSelenium ls = (LoggingSelenium)s;
@@ -68,9 +69,37 @@ public class LoggingSeleniumTest extends TestCase {
         verifyLog();
     }
 
+    public void testWebDriver() {
+        WebDriver s = SeleniumFactory.createWebDriver("log:embedded-rc:*firefox", "http://www.google.com/");
+
+        LoggingSelenium ls = (LoggingSelenium)s;
+        Logger l = Logger.getAnonymousLogger();
+        ls.setLogger(l);
+        l.addHandler(new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                logs.add(record);
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() throws SecurityException {
+            }
+        });
+
+        s.get("http://www.google.com/");
+        assertEquals("Google",s.getTitle());
+        s.quit();
+
+        verifyLog();
+    }
+
     private void verifyLog() {
         for (LogRecord log : logs) {
-            if (log.getMessage().contains("open(\"http://www.google.com/\")"))
+            if (log.getMessage().contains("open(\"http://www.google.com/\")") || log.getMessage().contains("get(\"http://www.google.com/\")"))
                 return; // found it
         }
         fail("Log not recorded");

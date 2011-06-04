@@ -27,6 +27,7 @@ import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
 
@@ -34,16 +35,33 @@ import java.io.IOException;
  * @author Kohsuke Kawaguchi
  */
 public class SauceOnDemandTest extends TestCase {
-    public void test1() throws IOException, InterruptedException {
+
+    public void testSelenium() throws IOException, InterruptedException {
         Selenium s = SeleniumFactory.create("sauce-ondemand:?max-duration=30&os=Linux&browser=firefox&browser-version=3.", "http://www.google.com/");
         s.start();
         s.open("/");
         assertEquals("Google",s.getTitle());
 
         SauceOnDemandSelenium ss = (SauceOnDemandSelenium) s;
-        assertNotNull(ss.getSessionId());
+        assertNotNull(ss.getSessionIdValue());
 
         s.stop();
+
+        Thread.sleep(15000);
+
+        System.out.println(ss.getSeleniumServerLogFile());
+        System.out.println(ss.getVideo());
+        IOUtils.copy(ss.getSeleniumServerLogFileInputStream(),System.out);
+    }
+
+    public void testWebDriver() throws IOException, InterruptedException {
+        WebDriver s = SeleniumFactory.createWebDriver("sauce-ondemand:?max-duration=30&os=Linux&browser=firefox&browser-version=3.", "http://www.google.com/");        
+        assertEquals("Google",s.getTitle());
+
+        SauceOnDemandSelenium ss = (SauceOnDemandSelenium) s;
+        assertNotNull(ss.getSessionIdValue());
+
+        s.quit();
 
         Thread.sleep(15000);
 

@@ -26,16 +26,23 @@ package com.saucelabs.selenium.client.htmlunit;
 import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import org.openqa.selenium.WebDriver;
 
 /**
  * @author Kohsuke Kawaguchi
  */
 public class HtmlUnitTest extends TestCase {
-    public void test1() {
+    public void testSelenium() {
         Selenium s = SeleniumFactory.create("htmlunit:", "http://www.google.com/");
         s.start();
         s.open("http://www.google.com/");
         assertEquals("Google",s.getTitle());
         s.stop();
+    }
+
+    public void testWebDriver() {
+        WebDriver s = SeleniumFactory.createWebDriver("htmlunit:", "http://www.google.com/");
+        assertEquals("Google",s.getTitle());
+        s.quit();
     }
 }

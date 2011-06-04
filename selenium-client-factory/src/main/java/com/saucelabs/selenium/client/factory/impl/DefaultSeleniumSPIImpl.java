@@ -28,11 +28,15 @@ import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.text.MessageFormat;
 
 /**
  * {@link SeleniumFactorySPI} that connects to Selenium RCs over its standard HTTP-based protocol.
@@ -43,7 +47,7 @@ import java.net.URLDecoder;
 public class DefaultSeleniumSPIImpl extends SeleniumFactorySPI {
     @Override
     public Selenium createSelenium(SeleniumFactory factory,String browserURL) {
-        if (!factory.getUri().startsWith("http:"))  return null;    // doesn't belong to us
+        if (!canHandle(factory.getUri()))  return null;    // doesn't belong to us
 
         try {
             URL url = new URL(factory.getUri());
@@ -66,6 +70,39 @@ public class DefaultSeleniumSPIImpl extends SeleniumFactorySPI {
             // impossible
             throw new Error(e);
         }
+    }
+
+    @Override
+    public WebDriver createWebDriver(SeleniumFactory factory,String browserURL) {
+        if (!canHandle(factory.getUri()))  return null;    // doesn't belong to us
+
+        try {
+            URL url = new URL(factory.getUri());
+
+            // since the browser start command parameter can contain arbitrary character that may
+            // potentially interfere with the rules of the URL, allow the user to specify it through a property.
+            String browserStartCommand = (String)factory.getProperty("browserStartCommand");
+            if (browserStartCommand==null)
+                // getPath starts with '/', so trim it off
+                // do URL decode, so that arbitrary strings can be passed in.
+                browserStartCommand = URLDecoder.decode(url.getPath().substring(1), "UTF-8");
+
+            //todo translate browserStartCommand to DesiredCapabilities
+            
+            WebDriver driver = new RemoteWebDriver(url, DesiredCapabilities.firefox());
+            driver.get(browserURL);
+            return driver;
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid URL: "+factory.getUri(),e);
+        } catch (UnsupportedEncodingException e) {
+            // impossible
+            throw new Error(e);
+        }
+    }
+
+    @Override
+    public boolean canHandle(String uri) {
+        return uri.startsWith("http:");
     }
 
     public static final int DEFAULT_PORT = Integer.getInteger(DefaultSeleniumSPIImpl.class.getName()+".defaultPort",4444);

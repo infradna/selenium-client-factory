@@ -42,4 +42,14 @@ public class FactoryTest extends TestCase {
             // success
         }
     }
+
+    public void testFailedWebDriver() {
+        try {
+            SeleniumFactory.createWebDriver("bogus:uri","http://www.google.com/");
+            fail("Expected to fail");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            // success
+        }
+    }
 }

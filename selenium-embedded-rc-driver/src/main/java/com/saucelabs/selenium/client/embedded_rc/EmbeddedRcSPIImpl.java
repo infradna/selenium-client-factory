@@ -25,6 +25,7 @@ package com.saucelabs.selenium.client.embedded_rc;
 
 import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.openqa.selenium.server.cli.RemoteControlLauncher;
@@ -45,30 +46,14 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
         String uri = factory.getUri();
-        if (!uri.startsWith(SCHEME))        return null;    // not ours
+        if (!canHandle(uri))        return null;    // not ours
         String browser = uri.substring(SCHEME.length());
 
         if (browser.length()==0)
             browser = getPlatformDefaultBrowser();
 
-        // allow the additional parameters to be passed in.
-        String[] args = getArguments(factory);
-        RemoteControlConfiguration configuration = RemoteControlLauncher.parseLauncherOptions(args);
-
         int port = allocateRandomPort();
-        configuration.setPort(port);
-
-        if (System.getProperty(JETTY_FORM_SIZE)==null)
-            System.setProperty(JETTY_FORM_SIZE, "0");
-
-        final SeleniumServer server;
-        try {
-            server = new SeleniumServer(Boolean.getBoolean("slowResources"), configuration);
-            // TODO: it'd be nice if SeleniumServer can be configured to listen only on 127.0.0.1 for security reasons
-            server.boot();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to start embedded RC",e);
-        }
+        final SeleniumServer server = startSeleniumServer(factory, port);
 
         // create a normal client driver
         SeleniumFactory f = factory.clone();
@@ -85,6 +70,62 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
                 }
             }
         };
+    }
+
+      private SeleniumServer startSeleniumServer(SeleniumFactory factory, int port) {
+        // allow the additional parameters to be passed in.
+        String[] args = getArguments(factory);
+        RemoteControlConfiguration configuration = RemoteControlLauncher.parseLauncherOptions(args);
+        configuration.setPort(port);
+
+        if (System.getProperty(JETTY_FORM_SIZE)==null)
+            System.setProperty(JETTY_FORM_SIZE, "0");
+
+        final SeleniumServer server;
+        try {
+            server = new SeleniumServer(Boolean.getBoolean("slowResources"), configuration);
+            // TODO: it'd be nice if SeleniumServer can be configured to listen only on 127.0.0.1 for security reasons
+            server.boot();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to start embedded RC",e);
+        }
+        return server;
+    }
+
+    @Override
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL) {
+        String uri = factory.getUri();
+        if (!canHandle(uri))        return null;    // not ours
+        String browser = uri.substring(SCHEME.length());
+
+        if (browser.length()==0)
+            browser = getPlatformDefaultBrowser();
+
+        int port = allocateRandomPort();
+        final SeleniumServer server = startSeleniumServer(factory, port);
+
+        // create a normal client driver
+        SeleniumFactory f = factory.clone();
+        WebDriver base = f.setUri("http://localhost:" + port + "/wd/hub").createWebDriver(browserURL);
+
+
+        // if the selenium session is shut down, stop the embedded RC
+        return new WebDriverFilter(base) {
+            @Override
+            public void quit() {
+                try {
+                    super.quit();
+                } finally {
+                    server.stop();
+                }
+            }
+
+        };
+    }
+
+    @Override
+    public boolean canHandle(String uri) {
+        return uri.startsWith(SCHEME);
     }
 
     private String[] getArguments(SeleniumFactory factory) {

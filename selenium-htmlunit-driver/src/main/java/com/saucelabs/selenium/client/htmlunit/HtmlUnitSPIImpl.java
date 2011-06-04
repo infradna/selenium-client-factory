@@ -27,6 +27,8 @@ import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -35,8 +37,24 @@ import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
 public class HtmlUnitSPIImpl extends SeleniumFactorySPI {
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
-        if (factory.getUri().startsWith("htmlunit:"))
+        if (canHandle(factory.getUri()))
             return new SeleniumHTMLUnit();
         return null;
+    }
+
+
+    @Override
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL) {
+        if (canHandle(factory.getUri())) {
+            WebDriver driver = new HtmlUnitDriver();
+            driver.get(browserURL);
+            return driver;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean canHandle(String uri) {
+        return uri.startsWith("htmlunit:");
     }
 }

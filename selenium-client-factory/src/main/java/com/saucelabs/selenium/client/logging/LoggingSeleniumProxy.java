@@ -24,6 +24,7 @@
 package com.saucelabs.selenium.client.logging;
 
 import com.thoughtworks.selenium.Selenium;
+import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -42,8 +43,14 @@ public class LoggingSeleniumProxy implements InvocationHandler, LoggingSelenium 
     private Level level = Level.INFO;
     private String id = "Selenium"+Integer.toHexString(hashCode());
 
+    private WebDriver webDriver;
+
     public LoggingSeleniumProxy(Selenium base) {
         this.base = base;
+    }
+
+    public LoggingSeleniumProxy(WebDriver webDriver) {
+        this.webDriver = webDriver;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -67,7 +74,7 @@ public class LoggingSeleniumProxy implements InvocationHandler, LoggingSelenium 
             }
             buf.append(')');
 
-            Object r = method.invoke(base, args);
+            Object r = invokeMethod(method, args);
 
             // report the return value if the method can return a value.
             if (method.getReturnType()!=void.class) {
@@ -82,6 +89,16 @@ public class LoggingSeleniumProxy implements InvocationHandler, LoggingSelenium 
             logger.log(level,buf.toString(),target);
             throw target;   // unwrap exception
         }
+    }
+
+    private Object invokeMethod(Method method, Object[] args) throws IllegalAccessException, InvocationTargetException {
+        Object r;
+        if (base != null) {
+            r = method.invoke(base, args);
+        } else {
+            r = method.invoke(webDriver, args);
+        }
+        return r;
     }
 
     private void appendValue(Object o, StringBuilder buf) {
@@ -118,6 +135,15 @@ public class LoggingSeleniumProxy implements InvocationHandler, LoggingSelenium 
     public String getId() {
         return id;
     }
+
+    public WebDriver getWebDriver() {
+        return webDriver;
+    }
+
+    public void setWebDriver(WebDriver webDriver) {
+        this.webDriver = webDriver;
+    }
+
 
     public void setId(String id) {
         this.id = id;

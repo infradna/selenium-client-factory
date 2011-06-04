@@ -23,9 +23,9 @@
  */
 package com.saucelabs.selenium.client.factory.spi;
 
-import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import org.openqa.selenium.WebDriver;
 
 /**
  * SPI implemented by the {@link Selenium} driver implementation providers.
@@ -63,4 +63,36 @@ public abstract class SeleniumFactorySPI {
      *      user application.
      */
     public abstract Selenium createSelenium(SeleniumFactory factory, String browserURL);
+
+    /**
+     * Instantiates the driver.
+     *
+     * <p>
+     * This method is invoked in response to {@link SeleniumFactory#createSelenium()} to actually
+     * instantiate the driver.
+     *
+     * @param factory
+     *      The factory that captures the configuration that the calling user application is looking for.
+     *      Never null.
+     * @param browserURL
+     *      See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
+     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     *
+     * @return
+     *      null if the implementation didn't recognize the URI specified in the factory.
+     *      returning null causes {@link SeleniumFactory} to try other SPIs found in the system.
+     * @throws IllegalArgumentException
+     *      If the URI was recognized by the SPI but some of its configurations were wrong,
+     *      or if the SPI failed to instantiate the Selenium driver, throw an exception.
+     *      {@link SeleniumFactory} will not try other SPIs and propagate the problem to the calling
+     *      user application.
+     */
+    public abstract WebDriver createWebDriver(SeleniumFactory factory,String browserURL);
+
+    /**
+     * Returns boolean indicating whether the Factory instance can handle the incoming browserURL.
+     * @param browserURL
+     * @return
+     */
+    public abstract boolean canHandle(String browserURL);
 }

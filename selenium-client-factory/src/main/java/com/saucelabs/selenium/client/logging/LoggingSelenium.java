@@ -24,6 +24,7 @@
 package com.saucelabs.selenium.client.logging;
 
 import com.thoughtworks.selenium.Selenium;
+import org.openqa.selenium.WebDriver;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,9 @@ public interface LoggingSelenium {
 
     Selenium getBaseDriver();
     void setBaseDriver(Selenium selenium);
+
+    WebDriver getWebDriver();
+    void setWebDriver(WebDriver webDriver);
 
     String getId();
     void setId(String id);

@@ -25,6 +25,7 @@ package com.saucelabs.sauce_ondemand.driver;
 
 import com.saucelabs.rest.Credential;
 import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
 import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ import java.text.MessageFormat;
 /**
  * @author Kohsuke Kawaguchi
  */
-class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
+class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium, Selenium {
     /**
      * {@link DefaultSelenium} throw away the session ID as soon as the {@link #stop()}
      * is called, so we'll  store it aside.
@@ -94,6 +95,10 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium {
             // failed to retrieve the session ID
         }
         return null;
+    }
+
+    public String getSessionIdValue() {
+        return getSessionId();
     }
 
     public Credential getCredential() {

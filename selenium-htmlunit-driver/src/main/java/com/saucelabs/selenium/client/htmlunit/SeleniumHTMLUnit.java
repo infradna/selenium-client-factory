@@ -2284,11 +2284,17 @@ public class SeleniumHTMLUnit implements Selenium {
 
     }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.thoughtworks.selenium.Selenium#getTable(java.lang.String)
-         */
+    public String getLog() {
+        // TODO Auto-generated method stub
+        logger.warning("Action not implemented: getLog");
+        return null;
+    }
+
+    /*
+    * (non-Javadoc)
+    *
+    * @see com.thoughtworks.selenium.Selenium#getTable(java.lang.String)
+    */
     public String getTable(String tableCellAddress) {
         // TODO Auto-generated method stub
         logger.warning("Action not implemented: getTable");
@@ -2338,11 +2344,17 @@ public class SeleniumHTMLUnit implements Selenium {
 
     }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.thoughtworks.selenium.Selenium#goBack()
-         */
+    public Number getCssCount(String s) {
+        // TODO Auto-generated method stub
+        logger.warning("Action not implemented: getCssCount");
+        return null;
+    }
+
+    /*
+    * (non-Javadoc)
+    *
+    * @see com.thoughtworks.selenium.Selenium#goBack()
+    */
     public void goBack() {
         try {
             currentPage = webClient.getPage(history.pop());
@@ -2687,12 +2699,17 @@ public class SeleniumHTMLUnit implements Selenium {
 
     }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.thoughtworks.selenium.Selenium#typeKeys(java.lang.String,
-         *      java.lang.String)
-         */
+    public void open(String s, String s1) {
+        // TODO Auto-generated method stub
+        logger.warning("Action not implemented: open");
+    }
+
+    /*
+    * (non-Javadoc)
+    *
+    * @see com.thoughtworks.selenium.Selenium#typeKeys(java.lang.String,
+    *      java.lang.String)
+    */
     public void typeKeys(String locator, String value) {
         // TODO Auto-generated method stub
         logger.warning("Action not implemented: typeKeys");

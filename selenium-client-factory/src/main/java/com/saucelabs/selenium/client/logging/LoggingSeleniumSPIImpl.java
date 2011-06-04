@@ -27,6 +27,7 @@ import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import org.openqa.selenium.WebDriver;
 
 import java.lang.reflect.Proxy;
 
@@ -40,10 +41,23 @@ public class LoggingSeleniumSPIImpl extends SeleniumFactorySPI {
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
         String uri = factory.getUri();
-        if (!uri.startsWith("log:"))       return null;    // not our URL
+        if (!canHandle(uri))       return null;    // not our URL
 
         Selenium base = factory.clone().setUri(uri.substring(4)).createSelenium(browserURL);
         return createLoggingSelenium(base);
+    }
+
+    @Override
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL) {
+        String uri = factory.getUri();
+        if (!canHandle(uri))       return null;    // not our URL
+        WebDriver base = factory.clone().setUri(uri.substring(4)).createWebDriver(browserURL);
+        return createLoggingWebDriver(base);
+    }
+
+    @Override
+    public boolean canHandle(String uri) {
+        return uri.startsWith("log:");
     }
 
     /**
@@ -52,6 +66,15 @@ public class LoggingSeleniumSPIImpl extends SeleniumFactorySPI {
     public static Selenium createLoggingSelenium(Selenium base) {
         return (Selenium) Proxy.newProxyInstance(LoggingSelenium.class.getClassLoader(),
                 new Class[]{LoggingSelenium.class, Selenium.class},
+                new LoggingSeleniumProxy(base));
+    }
+
+    /**
+     * Creates a logging selenium around the given Selenium driver.
+     */
+    public static WebDriver createLoggingWebDriver(WebDriver base) {
+        return (WebDriver) Proxy.newProxyInstance(LoggingSelenium.class.getClassLoader(),
+                new Class[]{LoggingSelenium.class, WebDriver.class},
                 new LoggingSeleniumProxy(base));
     }
 }
