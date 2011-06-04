@@ -81,7 +81,7 @@ public class SeleniumFactory {
      * This is just a convenient short-cut for {@code new SeleniumFactory().createWebDriver()}.
      */
     public static WebDriver createWebDriver() {
-        return new SeleniumFactory().createWebDriver();
+        return new SeleniumFactory().createWebDriverInstance();
     }
 
     /**
@@ -253,6 +253,26 @@ public class SeleniumFactory {
         if (url==null)
             throw new IllegalArgumentException("Neither SELENIUM_STARTING_URL/DEFAULT_SELENIUM_STARTING_URL system property nor environment variable exists");
         return createSelenium(url);
+    }
+
+    /**
+     * Based on the current configuration, instantiate a Selenium driver
+     * and returns it.
+     *
+     * <p>
+     * This version implicitly retrieves the 'browserURL' parameter and
+     * calls into {@link #createSelenium(String)} by checking the 'SELENIUM_STARTING_URL'
+     * system property or the environment variable. The system property takes precedence over the environment variable.
+     *
+     * @throws IllegalArgumentException
+     *      if the configuration is invalid, or the driver failed to instantiate.
+     * @return never null
+     */
+    public WebDriver createWebDriverInstance() {
+        String url = readPropertyOrEnv("SELENIUM_STARTING_URL",readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL",null));
+        if (url==null)
+            throw new IllegalArgumentException("Neither SELENIUM_STARTING_URL/DEFAULT_SELENIUM_STARTING_URL system property nor environment variable exists");
+        return createWebDriver(url);
     }
 
     public Selenium createSelenium(String browserURL) {
