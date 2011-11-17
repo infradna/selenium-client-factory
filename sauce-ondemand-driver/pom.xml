@@ -7,7 +7,6 @@
   </parent>
   <artifactId>sauce-ondemand-driver</artifactId>
   <name>Selenium Client Driver that uses Sauce OnDemand</name>
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
