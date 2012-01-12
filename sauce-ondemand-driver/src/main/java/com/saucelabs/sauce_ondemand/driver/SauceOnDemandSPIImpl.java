@@ -24,24 +24,19 @@
 package com.saucelabs.sauce_ondemand.driver;
 
 import com.saucelabs.rest.Credential;
-import com.thoughtworks.selenium.Selenium;
-import org.kohsuke.MetaInfServices;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.Selenium;
+import org.kohsuke.MetaInfServices;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -51,6 +46,17 @@ import java.util.Map.Entry;
  */
 @MetaInfServices
 public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
+    
+    private static final String DEFAULT_WEBDRIVER_HOST = "ondemand.saucelabs.com";
+    
+    private static final int DEFAULT_WEBDRIVER_PORT = 80;
+    
+    private static final String DEFAULT_SELENIUM_HOST = "saucelabs.com";
+
+    private static final int DEFAULT_SELENIUM_PORT = 4444;
+    public static final String SELENIUM_HOST = "SELENIUM_HOST";
+    public static final String SELENIUM_PORT = "SELENIUM_PORT";
+
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
         String uri = factory.getUri();
@@ -61,9 +67,21 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         if (!uri.startsWith("?"))
             throw new IllegalArgumentException("Missing '?':"+factory.getUri());
         Map<String, List<String>> paramMap = populateParameterMap(uri);
+        
+        String host = System.getenv("SELENIUM_HOST");
+        if (host == null || host.equals("")) {
+            host = DEFAULT_SELENIUM_HOST;
+        }
+        String portAsString = System.getenv("SELENIUM_PORT");
+        int port;
+        if (portAsString == null || portAsString.equals("")) {
+            port = DEFAULT_SELENIUM_PORT;
+        } else {
+            port = Integer.parseInt(portAsString);
+        }
 
         return new SeleniumImpl(
-                "saucelabs.com",4444,
+                host,port,
                 toJSON(paramMap),
                 browserURL,
                 new Credential(paramMap.get("username").get(0), paramMap.get("access-key").get(0)),
@@ -126,12 +144,24 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
             //use Firefox as a default
             desiredCapabilities = DesiredCapabilities.firefox();
         }
+        String host = System.getenv(SELENIUM_HOST);
+        if (host == null || host.equals("")) {
+            host = DEFAULT_WEBDRIVER_HOST;
+        }
+        String portAsString = System.getenv(SELENIUM_PORT);
+        int port;
+        if (portAsString == null || portAsString.equals("")) {
+            port = DEFAULT_WEBDRIVER_PORT;
+        } else {
+            port = Integer.parseInt(portAsString);
+        }
 
         try {
             WebDriver driver = new RemoteWebDriverImpl(
                     new URL(
                             MessageFormat.format(
-                                    "http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub",
+                                    "http://{2}:{3}@{0}:{1}/wd/hub",
+                                    host, port,
                                     getFirstParameter(paramMap,"username"),
                                     getFirstParameter(paramMap,"access-key"))),
                             desiredCapabilities,

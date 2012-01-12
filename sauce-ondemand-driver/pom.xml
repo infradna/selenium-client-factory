@@ -3,10 +3,11 @@
   <parent>
     <groupId>com.saucelabs.selenium</groupId>
     <artifactId>selenium-client-factory-parent</artifactId>
-    <version>2.1-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
   </parent>
   <artifactId>sauce-ondemand-driver</artifactId>
   <name>Selenium Client Driver that uses Sauce OnDemand</name>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -16,7 +17,7 @@
     <dependency>
       <groupId>com.saucelabs</groupId>
       <artifactId>sauce-rest-api</artifactId>
-      <version>1.6-SNAPSHOT</version>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>

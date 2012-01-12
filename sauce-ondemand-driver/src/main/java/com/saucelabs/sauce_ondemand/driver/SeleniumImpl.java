@@ -25,7 +25,6 @@ package com.saucelabs.sauce_ondemand.driver;
 
 import com.saucelabs.rest.Credential;
 import com.saucelabs.rest.JobFactory;
-import com.saucelabs.rest.UpdateJob;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 import sun.misc.BASE64Encoder;
@@ -152,7 +151,7 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium, Sel
 
     public void jobFailed() throws IOException {
         Map<String, Object> updates = new HashMap<String, Object>();
-        updates.put("passed", true);
+        updates.put("passed", false);
         updateJobInfo(updates);
     }
 
