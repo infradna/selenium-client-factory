@@ -68,11 +68,8 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
             throw new IllegalArgumentException("Missing '?':"+factory.getUri());
         Map<String, List<String>> paramMap = populateParameterMap(uri);
         
-        String host = System.getenv("SELENIUM_HOST");
-        if (host == null || host.equals("")) {
-            host = DEFAULT_SELENIUM_HOST;
-        }
-        String portAsString = System.getenv("SELENIUM_PORT");
+        String host = readPropertyOrEnv("SELENIUM_HOST", DEFAULT_SELENIUM_HOST);
+        String portAsString = readPropertyOrEnv("SELENIUM_PORT", null);
         int port;
         if (portAsString == null || portAsString.equals("")) {
             port = DEFAULT_SELENIUM_PORT;
@@ -144,11 +141,9 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
             //use Firefox as a default
             desiredCapabilities = DesiredCapabilities.firefox();
         }
-        String host = System.getenv(SELENIUM_HOST);
-        if (host == null || host.equals("")) {
-            host = DEFAULT_WEBDRIVER_HOST;
-        }
-        String portAsString = System.getenv(SELENIUM_PORT);
+        String host = readPropertyOrEnv(SELENIUM_HOST, DEFAULT_WEBDRIVER_HOST);
+
+        String portAsString = readPropertyOrEnv(SELENIUM_PORT, null);
         int port;
         if (portAsString == null || portAsString.equals("")) {
             port = DEFAULT_WEBDRIVER_PORT;
@@ -234,4 +229,13 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
     }
 
     private static final String SCHEME = "sauce-ondemand:";
+
+    private static String readPropertyOrEnv(String key, String defaultValue) {
+        String v = System.getProperty(key);
+        if (v==null)
+            v = System.getenv(key);
+        if (v==null)
+            v = defaultValue;
+        return v;
+    }
 }

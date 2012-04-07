@@ -1,139 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.saucelabs.selenium</groupId>
-  <artifactId>selenium-client-factory-parent</artifactId>
-  <version>2.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>selenium-client-factory super POM</name>
-  <description>Making Selenium tests more reusable</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.saucelabs.selenium</groupId>
+    <artifactId>selenium-client-factory-parent</artifactId>
+    <version>2.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>selenium-client-factory super POM</name>
+    <description>Making Selenium tests more reusable</description>
 
-  <modules>
-    <module>selenium-client-factory</module>
-    <module>selenium-embedded-rc-driver</module>
-    <module>selenium-htmlunit-driver</module>
-    <module>sauce-ondemand-driver</module>
-    <module>demo-project</module>
-  </modules>
+    <modules>
+        <module>selenium-client-factory</module>
+        <module>selenium-embedded-rc-driver</module>
+        <module>selenium-htmlunit-driver</module>
+        <module>sauce-ondemand-driver</module>
+        <module>demo-project</module>
+    </modules>
 
-  <distributionManagement>
-    <repository>
-      <id>maven.jenkins-ci.org</id>
-      <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
-    </repository>
-    <site>
-      <id>infradna.com</id>
-      <url>scp://www-data@infradna.com/var/www/selenium-client-factory.infradna.com</url>
-    </site>
-  </distributionManagement>
+    <distributionManagement>
+        <repository>
+          <id>maven.jenkins-ci.org</id>
+          <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
+        </repository>
+        <!--site>
+          <id>infradna.com</id>
+          <url>scp://www-data@infradna.com/var/www/selenium-client-factory.infradna.com</url>
+        </site-->
+    </distributionManagement>
 
-  <dependencies>
-    <dependency><!-- this dependency is compile-time only -->
-      <groupId>org.kohsuke.metainf-services</groupId>
-      <artifactId>metainf-services</artifactId>
-      <version>1.1</version>
-      <optional>true</optional>
-    </dependency>
+    <dependencies>
+        <dependency><!-- this dependency is compile-time only -->
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <version>1.1</version>
+            <optional>true</optional>
+        </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <developers>
-    <developer>
-      <id>kohsuke</id>
-      <name>Kohsuke Kawaguchi</name>
-      <email>kohsuke@infradna.com</email>
-    </developer>
-  </developers>
+    <developers>
+        <developer>
+            <id>kohsuke</id>
+            <name>Kohsuke Kawaguchi</name>
+            <email>kohsuke@infradna.com</email>
+        </developer>
+    </developers>
 
-  <licenses>
-    <license>
-      <name>MIT License</name>
-      <distribution>repository</distribution>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
-    </license>
-  </licenses>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <distribution>repository</distribution>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
 
-  <scm>
-    <connection>scm:git:git@github.com:infradna/selenium-client-factory.git</connection>
-  </scm>
+    <scm>
+        <connection>scm:git:git@github.com:infradna/selenium-client-factory.git</connection>
+    </scm>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>attached</goal>
-            </goals>
-            <configuration>
-              <descriptorId>jar-with-dependencies</descriptorId>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-provider-gitexe</artifactId>
-            <version>1.2</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-plugin</artifactId>
-        <version>1.3</version>
-      </plugin>
-    </plugins>
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.9</version>
-      </extension>
-    </extensions>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <descriptorId>jar-with-dependencies</descriptorId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-provider-gitexe</artifactId>
+                        <version>1.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.3</version>
+            </plugin>
+        </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.jvnet.wagon-svn</groupId>
+                <artifactId>wagon-svn</artifactId>
+                <version>1.9</version>
+            </extension>
+        </extensions>
+    </build>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.jvnet.sorcerer</groupId>
-        <artifactId>maven-sorcerer-plugin</artifactId>
-        <version>0.8</version>
-      </plugin>
-    </plugins>
-  </reporting>
-        
-  <repositories>
-    <repository>
-      <id>maven.dyndns.org</id>
-      <url>http://maven.dyndns.org/2/</url>
-    </repository>
-  </repositories>
-  
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.sorcerer</groupId>
+                <artifactId>maven-sorcerer-plugin</artifactId>
+                <version>0.8</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <repositories>
+        <repository>
+            <id>maven.dyndns.org</id>
+            <url>http://maven.dyndns.org/2/</url>
+        </repository>
+    </repositories>
+
 </project>
