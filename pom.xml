@@ -139,6 +139,14 @@
             <id>maven.dyndns.org</id>
             <url>http://maven.dyndns.org/2/</url>
         </repository>
+        <repository>
+          <id>maven.jenkins-ci.org</id>
+          <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>cloudbees-private-release-repository</id>
+            <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
+        </repository>
     </repositories>
 
 </project>
