@@ -49,7 +49,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
     
     private static final String DEFAULT_WEBDRIVER_HOST = "ondemand.saucelabs.com";
     
-    private static final int DEFAULT_WEBDRIVER_PORT = 80;
+    private static final String DEFAULT_WEBDRIVER_PORT = "80";
     
     private static final String DEFAULT_SELENIUM_HOST = "saucelabs.com";
 
@@ -144,11 +144,9 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         String host = readPropertyOrEnv(SELENIUM_HOST, DEFAULT_WEBDRIVER_HOST);
 
         String portAsString = readPropertyOrEnv(SELENIUM_PORT, null);
-        int port;
+
         if (portAsString == null || portAsString.equals("")) {
-            port = DEFAULT_WEBDRIVER_PORT;
-        } else {
-            port = Integer.parseInt(portAsString);
+            portAsString = DEFAULT_WEBDRIVER_PORT;
         }
 
         try {
@@ -156,7 +154,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
                     new URL(
                             MessageFormat.format(
                                     "http://{2}:{3}@{0}:{1}/wd/hub",
-                                    host, port,
+                                    host, portAsString,
                                     getFirstParameter(paramMap,"username"),
                                     getFirstParameter(paramMap,"access-key"))),
                             desiredCapabilities,
