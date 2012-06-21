@@ -30,6 +30,7 @@ import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
@@ -56,6 +57,13 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
     private static final int DEFAULT_SELENIUM_PORT = 4444;
     public static final String SELENIUM_HOST = "SELENIUM_HOST";
     public static final String SELENIUM_PORT = "SELENIUM_PORT";
+    public static final String OS = "os";
+    public static final String BROWSER = "browser";
+    public static final String BROWSER_VERSION = "browser-version";
+    public static final String USERNAME = "username";
+    public static final String ACCESS_KEY = "access-key";
+
+    private static final String[] NON_PROFILE_PARAMETERS = new String[] {ACCESS_KEY, BROWSER, BROWSER_VERSION, OS, USERNAME };
 
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
@@ -81,7 +89,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
                 host,port,
                 toJSON(paramMap),
                 browserURL,
-                new Credential(paramMap.get("username").get(0), paramMap.get("access-key").get(0)),
+                new Credential(paramMap.get(USERNAME).get(0), paramMap.get(ACCESS_KEY).get(0)),
                 paramMap.get("job-name").get(0));
     }
 
@@ -99,12 +107,12 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
             v.add(value);
         }
 
-        if (paramMap.get("username")==null && paramMap.get("access-key")==null) {
+        if (paramMap.get(USERNAME)==null && paramMap.get(ACCESS_KEY)==null) {
             try {
                 // read the credential from a credential file
                 Credential cred = new Credential();
-                paramMap.put("username", Collections.singletonList(cred.getUsername()));
-                paramMap.put("access-key", Collections.singletonList(cred.getKey()));
+                paramMap.put(USERNAME, Collections.singletonList(cred.getUsername()));
+                paramMap.put(ACCESS_KEY, Collections.singletonList(cred.getKey()));
             } catch (IOException e) {
                 throw new IllegalArgumentException("Failed to read "+Credential.getDefaultCredentialFile(),e);
             }
@@ -130,16 +138,21 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         Map<String, List<String>> paramMap = populateParameterMap(uri);
 
         DesiredCapabilities desiredCapabilities;
-        if (hasParameter(paramMap, "os") &&
-                hasParameter(paramMap,"browser") &&
-                hasParameter(paramMap, "browser-version")) {
+        if (hasParameter(paramMap, OS) &&
+                hasParameter(paramMap, BROWSER) &&
+                hasParameter(paramMap, BROWSER_VERSION)) {
+            String browser = getFirstParameter(paramMap, BROWSER);
             desiredCapabilities = new DesiredCapabilities(
-                    getFirstParameter(paramMap, "browser"),
-                    getFirstParameter(paramMap, "browser-version"),
-                    Platform.extractFromSysProperty(getFirstParameter(paramMap, "os")));
+                    browser,
+                    getFirstParameter(paramMap, BROWSER_VERSION),
+                    Platform.extractFromSysProperty(getFirstParameter(paramMap, OS)));
+            if (browser.equals("firefox")) {
+                setFirefoxProfile(paramMap, desiredCapabilities);
+            }
         } else {
             //use Firefox as a default
             desiredCapabilities = DesiredCapabilities.firefox();
+            setFirefoxProfile(paramMap, desiredCapabilities);
         }
         String host = readPropertyOrEnv(SELENIUM_HOST, DEFAULT_WEBDRIVER_HOST);
 
@@ -155,16 +168,32 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
                             MessageFormat.format(
                                     "http://{2}:{3}@{0}:{1}/wd/hub",
                                     host, portAsString,
-                                    getFirstParameter(paramMap,"username"),
-                                    getFirstParameter(paramMap,"access-key"))),
+                                    getFirstParameter(paramMap, USERNAME),
+                                    getFirstParameter(paramMap, ACCESS_KEY))),
                             desiredCapabilities,
-                    new Credential(getFirstParameter(paramMap,"username"), getFirstParameter(paramMap,"access-key")),
+                    new Credential(getFirstParameter(paramMap, USERNAME), getFirstParameter(paramMap, ACCESS_KEY)),
                     getFirstParameter(paramMap,"job-name"));
 
             driver.get(browserURL);
             return driver;
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Invalid URL: "+factory.getUri(),e);
+        }
+    }
+
+    private void setFirefoxProfile(Map<String, List<String>> paramMap, DesiredCapabilities desiredCapabilities) {
+        FirefoxProfile profile = new FirefoxProfile();
+        populateProfilePreferences(profile, paramMap);
+        desiredCapabilities.setCapability("firefox_profile", profile);
+    }
+
+    private void populateProfilePreferences(FirefoxProfile profile, Map<String, List<String>> paramMap) {
+        for (Map.Entry<String, List<String>> mapEntry : paramMap.entrySet()) {
+            String key = mapEntry.getKey();
+            if (Arrays.binarySearch(NON_PROFILE_PARAMETERS, key) == -1) {
+                 //add it to the profile
+                 profile.setPreference(key, getFirstParameter(paramMap, key));
+             }
         }
     }
 
