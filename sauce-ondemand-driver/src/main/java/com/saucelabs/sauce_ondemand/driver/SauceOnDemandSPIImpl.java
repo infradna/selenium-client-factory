@@ -31,6 +31,7 @@ import org.kohsuke.MetaInfServices;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
@@ -42,16 +43,16 @@ import java.util.Map.Entry;
 
 /**
  * {@link SeleniumFactorySPI} that talks to Sauce OnDemand.
- * 
+ *
  * @author Kohsuke Kawaguchi
  */
 @MetaInfServices
 public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
-    
+
     private static final String DEFAULT_WEBDRIVER_HOST = "ondemand.saucelabs.com";
-    
+
     private static final String DEFAULT_WEBDRIVER_PORT = "80";
-    
+
     private static final String DEFAULT_SELENIUM_HOST = "saucelabs.com";
 
     private static final int DEFAULT_SELENIUM_PORT = 4444;
@@ -63,7 +64,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
     public static final String USERNAME = "username";
     public static final String ACCESS_KEY = "access-key";
 
-    private static final String[] NON_PROFILE_PARAMETERS = new String[] {ACCESS_KEY, BROWSER, BROWSER_VERSION, OS, USERNAME };
+    private static final String[] NON_PROFILE_PARAMETERS = new String[]{ACCESS_KEY, BROWSER, BROWSER_VERSION, OS, USERNAME};
 
     @Override
     public Selenium createSelenium(SeleniumFactory factory, String browserURL) {
@@ -73,9 +74,9 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
 
         uri = uri.substring(SCHEME.length());
         if (!uri.startsWith("?"))
-            throw new IllegalArgumentException("Missing '?':"+factory.getUri());
+            throw new IllegalArgumentException("Missing '?':" + factory.getUri());
         Map<String, List<String>> paramMap = populateParameterMap(uri);
-        
+
         String host = readPropertyOrEnv("SELENIUM_HOST", DEFAULT_SELENIUM_HOST);
         String portAsString = readPropertyOrEnv("SELENIUM_PORT", null);
         int port;
@@ -86,7 +87,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         }
 
         return new SeleniumImpl(
-                host,port,
+                host, port,
                 toJSON(paramMap),
                 browserURL,
                 new Credential(paramMap.get(USERNAME).get(0), paramMap.get(ACCESS_KEY).get(0)),
@@ -98,28 +99,28 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         Map<String, List<String>> paramMap = new HashMap<String, List<String>>();
         for (String param : uri.substring(1).split("&")) {
             int idx = param.indexOf('=');
-            if(idx<0)   throw new IllegalArgumentException("Invalid parameter format: "+uri);
-            String key = param.substring(0,idx);
-            String value = param.substring(idx+1);
+            if (idx < 0) throw new IllegalArgumentException("Invalid parameter format: " + uri);
+            String key = param.substring(0, idx);
+            String value = param.substring(idx + 1);
 
             List<String> v = paramMap.get(key);
-            if (v==null)    paramMap.put(key, v = new ArrayList<String>());
+            if (v == null) paramMap.put(key, v = new ArrayList<String>());
             v.add(value);
         }
 
-        if (paramMap.get(USERNAME)==null && paramMap.get(ACCESS_KEY)==null) {
+        if (paramMap.get(USERNAME) == null && paramMap.get(ACCESS_KEY) == null) {
             try {
                 // read the credential from a credential file
                 Credential cred = new Credential();
                 paramMap.put(USERNAME, Collections.singletonList(cred.getUsername()));
                 paramMap.put(ACCESS_KEY, Collections.singletonList(cred.getKey()));
             } catch (IOException e) {
-                throw new IllegalArgumentException("Failed to read "+Credential.getDefaultCredentialFile(),e);
+                throw new IllegalArgumentException("Failed to read " + Credential.getDefaultCredentialFile(), e);
             }
         }
 
-        if (paramMap.get("job-name")==null)
-            paramMap.put("job-name",Collections.singletonList(getJobName()));
+        if (paramMap.get("job-name") == null)
+            paramMap.put("job-name", Collections.singletonList(getJobName()));
         return paramMap;
     }
 
@@ -132,7 +133,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
 
         uri = uri.substring(SCHEME.length());
         if (!uri.startsWith("?"))
-            throw new IllegalArgumentException("Missing '?':"+factory.getUri());
+            throw new IllegalArgumentException("Missing '?':" + factory.getUri());
 
         // massage parameter into JSON format
         Map<String, List<String>> paramMap = populateParameterMap(uri);
@@ -142,10 +143,10 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
                 hasParameter(paramMap, BROWSER) &&
                 hasParameter(paramMap, BROWSER_VERSION)) {
             String browser = getFirstParameter(paramMap, BROWSER);
-            desiredCapabilities = new DesiredCapabilities(
-                    browser,
-                    getFirstParameter(paramMap, BROWSER_VERSION),
-                    Platform.extractFromSysProperty(getFirstParameter(paramMap, OS)));
+            desiredCapabilities = new DesiredCapabilities();
+            desiredCapabilities.setBrowserName(browser);
+            desiredCapabilities.setVersion(getFirstParameter(paramMap, BROWSER_VERSION));
+            desiredCapabilities.setCapability(CapabilityType.PLATFORM, getFirstParameter(paramMap, OS));
             if (browser.equals("firefox")) {
                 setFirefoxProfile(paramMap, desiredCapabilities);
             }
@@ -170,14 +171,15 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
                                     host, portAsString,
                                     getFirstParameter(paramMap, USERNAME),
                                     getFirstParameter(paramMap, ACCESS_KEY))),
-                            desiredCapabilities,
+                    desiredCapabilities,
                     new Credential(getFirstParameter(paramMap, USERNAME), getFirstParameter(paramMap, ACCESS_KEY)),
-                    getFirstParameter(paramMap,"job-name"));
-
-            driver.get(browserURL);
+                    getFirstParameter(paramMap, "job-name"));
+            if (browserURL != null) {
+                driver.get(browserURL);
+            }
             return driver;
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid URL: "+factory.getUri(),e);
+            throw new IllegalArgumentException("Invalid URL: " + factory.getUri(), e);
         }
     }
 
@@ -191,9 +193,9 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         for (Map.Entry<String, List<String>> mapEntry : paramMap.entrySet()) {
             String key = mapEntry.getKey();
             if (Arrays.binarySearch(NON_PROFILE_PARAMETERS, key) == -1) {
-                 //add it to the profile
-                 profile.setPreference(key, getFirstParameter(paramMap, key));
-             }
+                //add it to the profile
+                profile.setPreference(key, getFirstParameter(paramMap, key));
+            }
         }
     }
 
@@ -222,20 +224,20 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
      * Converts a multi-map to a JSON format.
      */
     private String toJSON(Map<String, List<String>> paramMap) {
-        boolean first=true;
+        boolean first = true;
         StringBuilder buf = new StringBuilder("{");
         for (Entry<String, List<String>> e : paramMap.entrySet()) {
-            if (first)  first = false;
-            else        buf.append(',');
+            if (first) first = false;
+            else buf.append(',');
             buf.append('"').append(e.getKey()).append("\":");
 
             List<String> v = e.getValue();
-            if (v.size()==1) {
+            if (v.size() == 1) {
                 buf.append('"').append(v.get(0)).append('"');
             } else {
                 buf.append('[');
-                for (int i=0; i<v.size(); i++) {
-                    if(i!=0)    buf.append(',');
+                for (int i = 0; i < v.size(); i++) {
+                    if (i != 0) buf.append(',');
                     buf.append('"').append(v.get(i)).append('"');
                 }
                 buf.append(']');
@@ -259,9 +261,9 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
 
     private static String readPropertyOrEnv(String key, String defaultValue) {
         String v = System.getProperty(key);
-        if (v==null)
+        if (v == null)
             v = System.getenv(key);
-        if (v==null)
+        if (v == null)
             v = defaultValue;
         return v;
     }
