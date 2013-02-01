@@ -10,31 +10,31 @@ To reference the library, include the following dependencies in your Maven proje
 
 ```xml
 <dependency>
-            <groupId>com.saucelabs.selenium</groupId>
-            <artifactId>sauce-ondemand-driver</artifactId>
-            <version>2.6</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.saucelabs.selenium</groupId>
-            <artifactId>selenium-client-factory</artifactId>
-            <version>2.6</version>
-            <scope>test</scope>
-        </dependency>
+    <groupId>com.saucelabs.selenium</groupId>
+    <artifactId>sauce-ondemand-driver</artifactId>
+    <version>2.6</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>com.saucelabs.selenium</groupId>
+    <artifactId>selenium-client-factory</artifactId>
+    <version>2.6</version>
+    <scope>test</scope>
+</dependency>
 ```
 You will also need to reference the Sauce Labs Maven repository
 
 ```xml
 <repositories>
-        <repository>
-            <id>saucelabs-repository</id>
-            <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <repository>
+        <id>saucelabs-repository</id>
+        <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
 ```

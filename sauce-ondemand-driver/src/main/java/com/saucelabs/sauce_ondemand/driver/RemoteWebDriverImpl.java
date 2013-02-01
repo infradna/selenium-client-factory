@@ -2,8 +2,9 @@ package com.saucelabs.sauce_ondemand.driver;
 
 import com.saucelabs.rest.Credential;
 import com.saucelabs.rest.JobFactory;
-import com.saucelabs.rest.UpdateJob;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -21,14 +22,18 @@ import java.util.Map;
 /**
  * @author Ross Rowe
  */
-class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, SauceOnDemandSelenium {
+public class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, SauceOnDemandSelenium {
     private SessionId lastSessionId;
 
     private String jobName;
 
-    private final Credential credential;
+    private Credential credential;
 
-    RemoteWebDriverImpl(URL url, DesiredCapabilities capabilities, Credential credential, String jobName) {
+    public RemoteWebDriverImpl(){
+        super();
+    }
+
+    public RemoteWebDriverImpl(URL url, DesiredCapabilities capabilities, Credential credential, String jobName) {
         super(url, capabilities);
         this.credential = credential;
         this.jobName = jobName;
@@ -119,4 +124,7 @@ class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, SauceOnD
         updateJobInfo(updates);
     }
 
+    public <X> X getScreenshotAs(OutputType<X> target) throws WebDriverException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
