@@ -2,9 +2,7 @@ package com.saucelabs.sauce_ondemand.driver;
 
 import com.saucelabs.rest.Credential;
 import com.saucelabs.rest.JobFactory;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -124,7 +122,4 @@ public class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, S
         updateJobInfo(updates);
     }
 
-    public <X> X getScreenshotAs(OutputType<X> target) throws WebDriverException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

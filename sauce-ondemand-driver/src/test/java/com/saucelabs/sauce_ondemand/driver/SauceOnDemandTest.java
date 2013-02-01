@@ -23,12 +23,16 @@
  */
 package com.saucelabs.sauce_ondemand.driver;
 
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.thoughtworks.selenium.Selenium;
 import junit.framework.TestCase;
 import org.apache.commons.io.IOUtils;
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.Augmenter;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -60,6 +64,9 @@ public class SauceOnDemandTest extends TestCase {
 
         SauceOnDemandSelenium ss = (SauceOnDemandSelenium) s;
         assertNotNull(ss.getSessionIdValue());
+        WebDriver augmentedDriver = new Augmenter().augment(s);
+        File screenshot = ((TakesScreenshot)augmentedDriver).
+                                    getScreenshotAs(OutputType.FILE);
         ss.jobPassed();
         s.quit();
 
