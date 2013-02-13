@@ -1,8 +1,6 @@
 package com.saucelabs.selenium.client.embedded_rc;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import java.util.List;
 import java.util.Set;
@@ -10,7 +8,7 @@ import java.util.Set;
 /**
  * @author Ross Rowe
  */
-public class WebDriverFilter implements WebDriver {
+public class WebDriverFilter implements WebDriver, HasInputDevices {
     private WebDriver base;
 
     public WebDriverFilter(WebDriver base) {
@@ -67,5 +65,21 @@ public class WebDriverFilter implements WebDriver {
 
     public Options manage() {
         return base.manage();
+    }
+
+    public Keyboard getKeyboard() {
+        if (base instanceof HasInputDevices) {
+            return ((HasInputDevices) base).getKeyboard();
+        } else {
+            return null;
+        }
+    }
+
+    public Mouse getMouse() {
+        if (base instanceof HasInputDevices) {
+            return ((HasInputDevices) base).getMouse();
+        } else {
+            return null;
+        }
     }
 }
