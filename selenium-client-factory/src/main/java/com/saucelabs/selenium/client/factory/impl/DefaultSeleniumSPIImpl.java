@@ -90,7 +90,9 @@ public class DefaultSeleniumSPIImpl extends SeleniumFactorySPI {
             //todo translate browserStartCommand to DesiredCapabilities
             
             WebDriver driver = new RemoteWebDriver(url, DesiredCapabilities.firefox());
-            driver.get(browserURL);
+            if (browserURL != null) {
+                driver.get(browserURL);
+            }
             return driver;
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Invalid URL: "+factory.getUri(),e);
