@@ -23,23 +23,29 @@
  */
 package com.saucelabs.sauce_ondemand.driver;
 
-import com.saucelabs.rest.Credential;
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-import com.thoughtworks.selenium.Selenium;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.kohsuke.MetaInfServices;
-import org.openqa.selenium.Platform;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.Map.Entry;
+import com.saucelabs.rest.Credential;
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * {@link SeleniumFactorySPI} that talks to Sauce OnDemand.
@@ -125,7 +131,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
     }
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL) {
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, Capabilities capabilities) {
 
         String uri = factory.getUri();
         if (!uri.startsWith(SCHEME))
@@ -143,7 +149,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
                 hasParameter(paramMap, BROWSER) &&
                 hasParameter(paramMap, BROWSER_VERSION)) {
             String browser = getFirstParameter(paramMap, BROWSER);
-            desiredCapabilities = new DesiredCapabilities();
+            desiredCapabilities = new DesiredCapabilities(capabilities);
             desiredCapabilities.setBrowserName(browser);
             desiredCapabilities.setVersion(getFirstParameter(paramMap, BROWSER_VERSION));
             desiredCapabilities.setCapability(CapabilityType.PLATFORM, getFirstParameter(paramMap, OS));
@@ -153,6 +159,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         } else {
             //use Firefox as a default
             desiredCapabilities = DesiredCapabilities.firefox();
+            desiredCapabilities.merge(capabilities);
             setFirefoxProfile(paramMap, desiredCapabilities);
         }
         String host = readPropertyOrEnv(SELENIUM_HOST, DEFAULT_WEBDRIVER_HOST);

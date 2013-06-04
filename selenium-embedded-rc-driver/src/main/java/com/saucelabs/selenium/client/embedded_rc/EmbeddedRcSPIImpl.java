@@ -23,18 +23,20 @@
  */
 package com.saucelabs.selenium.client.embedded_rc;
 
-import com.thoughtworks.selenium.Selenium;
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+
 import org.kohsuke.MetaInfServices;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.openqa.selenium.server.cli.RemoteControlLauncher;
+
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * {@link SeleniumFactorySPI} implementation that lets you run Selenium RC inside the same JVM.
@@ -93,7 +95,7 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
     }
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL) {
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, Capabilities capabilities) {
         String uri = factory.getUri();
         if (!canHandle(uri))        return null;    // not ours
         String browser = uri.substring(SCHEME.length());
@@ -106,7 +108,7 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
 
         // create a normal client driver
         SeleniumFactory f = factory.clone();
-        WebDriver base = f.setUri("http://localhost:" + port + "/wd/hub").createWebDriver(browserURL);
+        WebDriver base = f.setUri("http://localhost:" + port + "/wd/hub").createWebDriverInstance(browserURL, capabilities);
 
 
         // if the selenium session is shut down, stop the embedded RC

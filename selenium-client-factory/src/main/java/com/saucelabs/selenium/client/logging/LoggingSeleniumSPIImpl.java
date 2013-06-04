@@ -23,13 +23,15 @@
  */
 package com.saucelabs.selenium.client.logging;
 
-import com.thoughtworks.selenium.Selenium;
+import java.lang.reflect.Proxy;
+
 import org.kohsuke.MetaInfServices;
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.reflect.Proxy;
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * {@link SeleniumFactorySPI} that handles "log:...".
@@ -48,10 +50,10 @@ public class LoggingSeleniumSPIImpl extends SeleniumFactorySPI {
     }
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL) {
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, Capabilities capabilities) {
         String uri = factory.getUri();
         if (!canHandle(uri))       return null;    // not our URL
-        WebDriver base = factory.clone().setUri(uri.substring(4)).createWebDriver(browserURL);
+        WebDriver base = factory.clone().setUri(uri.substring(4)).createWebDriverInstance(browserURL, capabilities);
         return createLoggingWebDriver(base);
     }
 

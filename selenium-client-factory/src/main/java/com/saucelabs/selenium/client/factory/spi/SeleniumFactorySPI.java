@@ -23,9 +23,12 @@
  */
 package com.saucelabs.selenium.client.factory.spi;
 
-import com.thoughtworks.selenium.Selenium;
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
+
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * SPI implemented by the {@link Selenium} and {@link WebDriver} implementation providers.
@@ -76,6 +79,8 @@ public abstract class SeleniumFactorySPI {
      *      Never null.
      * @param browserURL
      *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     * @param capabilities
+     *      The capabilities to use, browser, browser version and os will be override.
      *
      * @return
      *      null if the implementation didn't recognize the URI specified in the factory.
@@ -86,7 +91,7 @@ public abstract class SeleniumFactorySPI {
      *      {@link SeleniumFactory} will not try other SPIs and propagate the problem to the calling
      *      user application.
      */
-    public abstract WebDriver createWebDriver(SeleniumFactory factory,String browserURL);
+    public abstract WebDriver createWebDriver(SeleniumFactory factory,String browserURL, Capabilities capabilities);
 
     /**
      * Returns boolean indicating whether the Factory instance can handle the incoming URI.
