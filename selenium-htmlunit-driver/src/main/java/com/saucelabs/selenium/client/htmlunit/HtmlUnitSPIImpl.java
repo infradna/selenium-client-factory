@@ -23,12 +23,14 @@
  */
 package com.saucelabs.selenium.client.htmlunit;
 
-import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -44,7 +46,7 @@ public class HtmlUnitSPIImpl extends SeleniumFactorySPI {
 
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL) {
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, DesiredCapabilities capabilities) {
         if (canHandle(factory.getUri())) {
             WebDriver driver = new HtmlUnitDriver();
             driver.get(browserURL);

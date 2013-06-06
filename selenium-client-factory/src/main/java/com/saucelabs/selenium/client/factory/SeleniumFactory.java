@@ -23,9 +23,7 @@
  */
 package com.saucelabs.selenium.client.factory;
 
-import com.thoughtworks.selenium.Selenium;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-import org.openqa.selenium.WebDriver;
+import static java.util.logging.Level.WARNING;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,7 +36,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import static java.util.logging.Level.WARNING;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * Factory of {@link Selenium}.
@@ -81,7 +84,24 @@ public class SeleniumFactory {
      * This is just a convenient short-cut for {@code new SeleniumFactory().createWebDriver()}.
      */
     public static WebDriver createWebDriver() {
-        return new SeleniumFactory().createWebDriverInstance();
+        return new SeleniumFactory().createWebDriverInstance(null);
+    }
+
+    /**
+     * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
+     * and run the test against the domain specified in 'SELENIUM_STARTING_URL' system property or the environment variable.
+     *
+     * <p>
+     * If exists, the system property takes precedence over the environment variable.
+     *
+     * <p>
+     * This is just a convenient short-cut for {@code new SeleniumFactory().createWebDriver()}.
+     * 
+     * @param capabilities
+     *      The desired driver capabilities to use, browser, browser version and os will be override.
+     */
+    public static WebDriver createWebDriver(DesiredCapabilities capabilities) {
+        return new SeleniumFactory().createWebDriverInstance(capabilities);
     }
 
     /**
@@ -130,7 +150,24 @@ public class SeleniumFactory {
      *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
      */
     public static WebDriver createWebDriver(String driverUri, String browserURL) {
-        return new SeleniumFactory().setUri(driverUri).createWebDriver(browserURL);
+        return new SeleniumFactory().setUri(driverUri).createWebDriverInstance(browserURL, null);
+    }
+
+    /**
+     * Uses the specified driver and the test domain and create a WebDriver instance.
+     *
+     * <p>
+     * This is just a convenient short-cut for {@code new SeleniumFactory().setUri(driverUri).createSelenium(browserURL)}.
+     *
+     * @param driverUri
+     *      The URI indicating the Selenium driver to be instantiated.
+     * @param browserURL
+     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     * @param capabilities
+     *      The desired driver capabilities to use, browser, browser version and os will be override.
+     */
+    public static WebDriver createWebDriver(String driverUri, String browserURL, DesiredCapabilities capabilities) {
+        return new SeleniumFactory().setUri(driverUri).createWebDriverInstance(browserURL, capabilities);
     }
 
     private String uri;
@@ -263,14 +300,17 @@ public class SeleniumFactory {
      * This version implicitly retrieves the 'browserURL' parameter and
      * calls into {@link #createSelenium(String)} by checking the 'SELENIUM_STARTING_URL'
      * system property or the environment variable. The system property takes precedence over the environment variable.
-     *
+     * 
+     * @param capabilities
+     *      The desired driver capabilities to use, browser, browser version and os will be override.
+     * 
      * @throws IllegalArgumentException
      *      if the configuration is invalid, or the driver failed to instantiate.
      * @return never null
      */
-    public WebDriver createWebDriverInstance() {
+    public WebDriver createWebDriverInstance(DesiredCapabilities capabilities) {
         String url = readPropertyOrEnv("SELENIUM_STARTING_URL",readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL",null));
-        return createWebDriver(url);
+        return createWebDriverInstance(url, capabilities);
     }
 
     public Selenium createSelenium(String browserURL) {
@@ -284,9 +324,9 @@ public class SeleniumFactory {
         }
     }
 
-    public WebDriver createWebDriver(String browserURL) {
+    public WebDriver createWebDriverInstance(String browserURL, DesiredCapabilities capabilities) {
         SeleniumFactorySPI seleniumFactory = createSeleniumFactory();
-        WebDriver webDriver = seleniumFactory.createWebDriver(this, browserURL);
+        WebDriver webDriver = seleniumFactory.createWebDriver(this, browserURL, capabilities);
         if (webDriver == null) {
             throw new IllegalArgumentException(String.format(
                     "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));

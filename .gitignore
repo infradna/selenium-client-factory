@@ -6,3 +6,5 @@ target
 atlassian-ide-plugin.xml
 
 test.log
+/.project
+/.settings

@@ -23,20 +23,20 @@
  */
 package com.saucelabs.selenium.client.factory.impl;
 
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.Selenium;
-import org.kohsuke.MetaInfServices;
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
-
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.text.MessageFormat;
+
+import org.kohsuke.MetaInfServices;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * {@link SeleniumFactorySPI} that connects to Selenium RCs over its standard HTTP-based protocol.
@@ -73,7 +73,7 @@ public class DefaultSeleniumSPIImpl extends SeleniumFactorySPI {
     }
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory,String browserURL) {
+    public WebDriver createWebDriver(SeleniumFactory factory,String browserURL, DesiredCapabilities capabilities) {
         if (!canHandle(factory.getUri()))  return null;    // doesn't belong to us
 
         try {
@@ -88,8 +88,10 @@ public class DefaultSeleniumSPIImpl extends SeleniumFactorySPI {
                 browserStartCommand = URLDecoder.decode(url.getPath().substring(1), "UTF-8");
 
             //todo translate browserStartCommand to DesiredCapabilities
-            
-            WebDriver driver = new RemoteWebDriver(url, DesiredCapabilities.firefox());
+
+            DesiredCapabilities desiredCapabilities = capabilities;
+            desiredCapabilities.merge(DesiredCapabilities.firefox());
+            WebDriver driver = new RemoteWebDriver(url, desiredCapabilities);
             if (browserURL != null) {
                 driver.get(browserURL);
             }
