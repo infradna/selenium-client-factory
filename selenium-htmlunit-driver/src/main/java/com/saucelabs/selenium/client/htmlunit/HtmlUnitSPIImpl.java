@@ -24,9 +24,9 @@
 package com.saucelabs.selenium.client.htmlunit;
 
 import org.kohsuke.MetaInfServices;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
@@ -46,7 +46,7 @@ public class HtmlUnitSPIImpl extends SeleniumFactorySPI {
 
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, Capabilities capabilities) {
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, DesiredCapabilities capabilities) {
         if (canHandle(factory.getUri())) {
             WebDriver driver = new HtmlUnitDriver();
             driver.get(browserURL);

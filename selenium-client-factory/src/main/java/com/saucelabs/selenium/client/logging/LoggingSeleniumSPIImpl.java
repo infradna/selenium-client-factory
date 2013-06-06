@@ -26,8 +26,8 @@ package com.saucelabs.selenium.client.logging;
 import java.lang.reflect.Proxy;
 
 import org.kohsuke.MetaInfServices;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
@@ -50,7 +50,7 @@ public class LoggingSeleniumSPIImpl extends SeleniumFactorySPI {
     }
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, Capabilities capabilities) {
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, DesiredCapabilities capabilities) {
         String uri = factory.getUri();
         if (!canHandle(uri))       return null;    // not our URL
         WebDriver base = factory.clone().setUri(uri.substring(4)).createWebDriverInstance(browserURL, capabilities);

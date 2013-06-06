@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 import org.kohsuke.MetaInfServices;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.openqa.selenium.server.cli.RemoteControlLauncher;
@@ -95,7 +95,7 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
     }
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, Capabilities capabilities) {
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, DesiredCapabilities capabilities) {
         String uri = factory.getUri();
         if (!canHandle(uri))        return null;    // not ours
         String browser = uri.substring(SCHEME.length());

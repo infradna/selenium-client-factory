@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.kohsuke.MetaInfServices;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.CapabilityType;
@@ -131,7 +130,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
     }
 
     @Override
-    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, Capabilities capabilities) {
+    public WebDriver createWebDriver(SeleniumFactory factory, String browserURL, DesiredCapabilities capabilities) {
 
         String uri = factory.getUri();
         if (!uri.startsWith(SCHEME))
@@ -158,8 +157,8 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
             }
         } else {
             //use Firefox as a default
-            desiredCapabilities = DesiredCapabilities.firefox();
-            desiredCapabilities.merge(capabilities);
+            desiredCapabilities = capabilities;
+            desiredCapabilities.merge(DesiredCapabilities.firefox());
             setFirefoxProfile(paramMap, desiredCapabilities);
         }
         String host = readPropertyOrEnv(SELENIUM_HOST, DEFAULT_WEBDRIVER_HOST);
