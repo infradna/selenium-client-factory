@@ -23,20 +23,20 @@
  */
 package com.saucelabs.selenium.client.factory.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.Selenium;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.List;
 
 /**
  * {@link SeleniumFactorySPI} that connects to Selenium RCs over its standard HTTP-based protocol.
@@ -110,4 +110,9 @@ public class DefaultSeleniumSPIImpl extends SeleniumFactorySPI {
     }
 
     public static final int DEFAULT_PORT = Integer.getInteger(DefaultSeleniumSPIImpl.class.getName()+".defaultPort",4444);
+
+    @Override
+    public List<WebDriver> createWebDrivers(SeleniumFactory seleniumFactory, String browserURL) {
+        throw new IllegalArgumentException("Not Supported");
+    }
 }

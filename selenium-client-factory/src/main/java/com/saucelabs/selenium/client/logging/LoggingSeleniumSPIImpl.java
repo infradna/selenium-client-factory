@@ -23,15 +23,15 @@
  */
 package com.saucelabs.selenium.client.logging;
 
-import java.lang.reflect.Proxy;
-
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-import com.thoughtworks.selenium.Selenium;
+import java.lang.reflect.Proxy;
+import java.util.List;
 
 /**
  * {@link SeleniumFactorySPI} that handles "log:...".
@@ -78,5 +78,10 @@ public class LoggingSeleniumSPIImpl extends SeleniumFactorySPI {
         return (WebDriver) Proxy.newProxyInstance(LoggingSelenium.class.getClassLoader(),
                 new Class[]{LoggingSelenium.class, WebDriver.class},
                 new LoggingSeleniumProxy(base));
+    }
+
+    @Override
+    public List<WebDriver> createWebDrivers(SeleniumFactory seleniumFactory, String browserURL) {
+        throw new IllegalArgumentException("Not Supported");
     }
 }

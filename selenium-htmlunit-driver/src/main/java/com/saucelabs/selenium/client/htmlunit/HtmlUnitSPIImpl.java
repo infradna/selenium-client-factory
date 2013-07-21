@@ -32,6 +32,8 @@ import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
 import com.thoughtworks.selenium.Selenium;
 
+import java.util.List;
+
 /**
  * @author Kohsuke Kawaguchi
  */
@@ -53,6 +55,11 @@ public class HtmlUnitSPIImpl extends SeleniumFactorySPI {
             return driver;
         }
         return null;
+    }
+
+    @Override
+    public List<WebDriver> createWebDrivers(SeleniumFactory seleniumFactory, String browserURL) {
+        throw new IllegalArgumentException("Not Supported");
     }
 
     @Override

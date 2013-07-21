@@ -23,7 +23,11 @@
  */
 package com.saucelabs.selenium.client.factory;
 
-import static java.util.logging.Level.WARNING;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.Selenium;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,26 +37,22 @@ import java.net.URL;
 import java.sql.DriverManager;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.Selenium;
+import static java.util.logging.Level.WARNING;
 
 /**
  * Factory of {@link Selenium}.
- *
- * <p>
+ * <p/>
+ * <p/>
  * Compared to directly initializing {@link com.thoughtworks.selenium.DefaultSelenium}, this additional indirection
  * allows the build script or a CI server to control how you connect to the selenium.
  * This makes it easier to run the same set of tests in different environments without
  * modifying the test code.
- *
- * <p>
+ * <p/>
+ * <p/>
  * This is analogous to how you connect to JDBC &mdash; you normally don't directly
  * instantiate a specific driver, and instead you do {@link DriverManager#getConnection(String)}.
  *
@@ -62,11 +62,11 @@ public class SeleniumFactory {
     /**
      * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
      * and run the test against the domain specified in 'SELENIUM_STARTING_URL' system property or the environment variable.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * If exists, the system property takes precedence over the environment variable.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This is just a convenient short-cut for {@code new SeleniumFactory().createSelenium()}.
      */
     public static Selenium create() {
@@ -76,29 +76,34 @@ public class SeleniumFactory {
     /**
      * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
      * and run the test against the domain specified in 'SELENIUM_STARTING_URL' system property or the environment variable.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * If exists, the system property takes precedence over the environment variable.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This is just a convenient short-cut for {@code new SeleniumFactory().createWebDriver()}.
      */
     public static WebDriver createWebDriver() {
         return new SeleniumFactory().createWebDriverInstance(null);
     }
 
+    public static List<WebDriver> createWebDrivers() {
+        String url = readPropertyOrEnv("SELENIUM_STARTING_URL", readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL", null));
+        return new SeleniumFactory().createWebDriverInstances(url);
+    }
+
+
     /**
      * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
      * and run the test against the domain specified in 'SELENIUM_STARTING_URL' system property or the environment variable.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * If exists, the system property takes precedence over the environment variable.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This is just a convenient short-cut for {@code new SeleniumFactory().createWebDriver()}.
-     * 
-     * @param capabilities
-     *      The desired driver capabilities to use, browser, browser version and os will be override.
+     *
+     * @param capabilities The desired driver capabilities to use, browser, browser version and os will be override.
      */
     public static WebDriver createWebDriver(DesiredCapabilities capabilities) {
         return new SeleniumFactory().createWebDriverInstance(capabilities);
@@ -107,16 +112,15 @@ public class SeleniumFactory {
     /**
      * Uses a driver specified by the 'SELENIUM_DRIVER' system property or the environment variable,
      * and run the test against the specified domain.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * If exists, the system property takes precedence over the environment variable.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This is just a convenient short-cut for {@code new SeleniumFactory().createSelenium(browserURL)}.
      *
-     * @param browserURL
-     *      See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
-     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     * @param browserURL See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
+     *                   This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
      */
     public static Selenium create(String browserURL) {
         return new SeleniumFactory().createSelenium(browserURL);
@@ -124,15 +128,13 @@ public class SeleniumFactory {
 
     /**
      * Uses the specified driver and the test domain and create a driver instance.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This is just a convenient short-cut for {@code new SeleniumFactory().setUri(driverUri).createSelenium(browserURL)}.
      *
-     * @param driverUri
-     *      The URI indicating the Selenium driver to be instantiated.
-     * @param browserURL
-     *      See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
-     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     * @param driverUri  The URI indicating the Selenium driver to be instantiated.
+     * @param browserURL See the parameter of the same name in {@link DefaultSelenium#DefaultSelenium(String, int, String, String)}.
+     *                   This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
      */
     public static Selenium create(String driverUri, String browserURL) {
         return new SeleniumFactory().setUri(driverUri).createSelenium(browserURL);
@@ -140,14 +142,12 @@ public class SeleniumFactory {
 
     /**
      * Uses the specified driver and the test domain and create a WebDriver instance.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This is just a convenient short-cut for {@code new SeleniumFactory().setUri(driverUri).createSelenium(browserURL)}.
      *
-     * @param driverUri
-     *      The URI indicating the Selenium driver to be instantiated.
-     * @param browserURL
-     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     * @param driverUri  The URI indicating the Selenium driver to be instantiated.
+     * @param browserURL This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
      */
     public static WebDriver createWebDriver(String driverUri, String browserURL) {
         return new SeleniumFactory().setUri(driverUri).createWebDriverInstance(browserURL, null);
@@ -155,16 +155,13 @@ public class SeleniumFactory {
 
     /**
      * Uses the specified driver and the test domain and create a WebDriver instance.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This is just a convenient short-cut for {@code new SeleniumFactory().setUri(driverUri).createSelenium(browserURL)}.
      *
-     * @param driverUri
-     *      The URI indicating the Selenium driver to be instantiated.
-     * @param browserURL
-     *      This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
-     * @param capabilities
-     *      The desired driver capabilities to use, browser, browser version and os will be override.
+     * @param driverUri    The URI indicating the Selenium driver to be instantiated.
+     * @param browserURL   This specifies the domain name in the format of "http://foo.example.com" where the test occurs.
+     * @param capabilities The desired driver capabilities to use, browser, browser version and os will be override.
      */
     public static WebDriver createWebDriver(String driverUri, String browserURL, DesiredCapabilities capabilities) {
         return new SeleniumFactory().setUri(driverUri).createWebDriverInstance(browserURL, capabilities);
@@ -172,18 +169,18 @@ public class SeleniumFactory {
 
     private String uri;
     private ClassLoader cl = Thread.currentThread().getContextClassLoader();
-    private Map<String,Object> properties = new HashMap<String,Object>();
+    private Map<String, Object> properties = new HashMap<String, Object>();
 
     public SeleniumFactory() {
         // use the embedded RC as the default, since this is the least environment dependent.
-        uri = readPropertyOrEnv("SELENIUM_DRIVER",readPropertyOrEnv("DEFAULT_SELENIUM_DRIVER","embedded-rc:"));
+        uri = readPropertyOrEnv("SELENIUM_DRIVER", readPropertyOrEnv("DEFAULT_SELENIUM_DRIVER", "embedded-rc:"));
     }
 
     private static String readPropertyOrEnv(String key, String defaultValue) {
         String v = System.getProperty(key);
-        if (v==null)
+        if (v == null)
             v = System.getenv(key);
-        if (v==null)
+        if (v == null)
             v = defaultValue;
         return v;
     }
@@ -197,12 +194,11 @@ public class SeleniumFactory {
 
     /**
      * Sets the URI of the Selenium driver.
-     * <p>
+     * <p/>
      * Initially, the value of the 'SELENIUM_DRIVER' system property of the environment variable is read
      * and set. The system property takes precedence over the environment variable.
      *
-     * @return
-     *      'this' instance to facilitate the fluent API pattern.
+     * @return 'this' instance to facilitate the fluent API pattern.
      */
     public SeleniumFactory setUri(String uri) {
         this.uri = uri;
@@ -221,8 +217,7 @@ public class SeleniumFactory {
      * Initially set to {@code Thread.currentThread().getContextClassLoader()} of the thread
      * that instantiated this factory.
      *
-     * @return
-     *      'this' instance to facilitate the fluent API pattern.
+     * @return 'this' instance to facilitate the fluent API pattern.
      */
     public SeleniumFactory setClassLoader(ClassLoader cl) {
         this.cl = cl;
@@ -233,11 +228,10 @@ public class SeleniumFactory {
      * Sets other misc. driver-specific properties. Refer to the driver implementation
      * for the valid properties and their expected types.
      *
-     * @return
-     *      'this' instance to facilitate the fluent API pattern.
+     * @return 'this' instance to facilitate the fluent API pattern.
      */
     public SeleniumFactory setProperty(String key, Object value) {
-        this.properties.put(key,value);
+        this.properties.put(key, value);
         return this;
     }
 
@@ -254,13 +248,13 @@ public class SeleniumFactory {
      *
      * @return never null
      */
-    public Map<String,Object> getProperties() {
+    public Map<String, Object> getProperties() {
         return this.properties;
     }
 
     /**
      * Creates a clone of this factory that's identically configured.
-     * <p>
+     * <p/>
      * Properties are only shallowly copied.
      */
     public SeleniumFactory clone() {
@@ -275,19 +269,18 @@ public class SeleniumFactory {
     /**
      * Based on the current configuration, instantiate a Selenium driver
      * and returns it.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This version implicitly retrieves the 'browserURL' parameter and
      * calls into {@link #createSelenium(String)} by checking the 'SELENIUM_STARTING_URL'
      * system property or the environment variable. The system property takes precedence over the environment variable.
      *
-     * @throws IllegalArgumentException
-     *      if the configuration is invalid, or the driver failed to instantiate.
      * @return never null
+     * @throws IllegalArgumentException if the configuration is invalid, or the driver failed to instantiate.
      */
     public Selenium createSelenium() {
-        String url = readPropertyOrEnv("SELENIUM_STARTING_URL",readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL",null));
-        if (url==null)
+        String url = readPropertyOrEnv("SELENIUM_STARTING_URL", readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL", null));
+        if (url == null)
             throw new IllegalArgumentException("Neither SELENIUM_STARTING_URL/DEFAULT_SELENIUM_STARTING_URL system property nor environment variable exists");
         return createSelenium(url);
     }
@@ -295,23 +288,21 @@ public class SeleniumFactory {
     /**
      * Based on the current configuration, instantiate a Selenium driver
      * and returns it.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * This version implicitly retrieves the 'browserURL' parameter and
      * calls into {@link #createSelenium(String)} by checking the 'SELENIUM_STARTING_URL'
      * system property or the environment variable. The system property takes precedence over the environment variable.
-     * 
-     * @param capabilities
-     *      The desired driver capabilities to use, browser, browser version and os will be override.
-     * 
-     * @throws IllegalArgumentException
-     *      if the configuration is invalid, or the driver failed to instantiate.
+     *
+     * @param capabilities The desired driver capabilities to use, browser, browser version and os will be override.
      * @return never null
+     * @throws IllegalArgumentException if the configuration is invalid, or the driver failed to instantiate.
      */
     public WebDriver createWebDriverInstance(DesiredCapabilities capabilities) {
-        String url = readPropertyOrEnv("SELENIUM_STARTING_URL",readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL",null));
+        String url = readPropertyOrEnv("SELENIUM_STARTING_URL", readPropertyOrEnv("DEFAULT_SELENIUM_STARTING_URL", null));
         return createWebDriverInstance(url, capabilities);
     }
+
 
     public Selenium createSelenium(String browserURL) {
         SeleniumFactorySPI seleniumFactory = createSeleniumFactory();
@@ -335,36 +326,46 @@ public class SeleniumFactory {
         }
     }
 
+    private List<WebDriver> createWebDriverInstances(String browserURL) {
+        SeleniumFactorySPI seleniumFactory = createSeleniumFactory();
+        List<WebDriver> webDrivers = seleniumFactory.createWebDrivers(this, browserURL);
+        if (webDrivers == null) {
+            throw new IllegalArgumentException(String.format(
+                    "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));
+        } else {
+            return webDrivers;
+        }
+    }
+
     /**
      * Based on the current configuration, instantiate a Selenium driver
      * and returns it.
      *
-     * @throws IllegalArgumentException
-     *      if the configuration is invalid, or the driver failed to instantiate.
      * @return never null
+     * @throws IllegalArgumentException if the configuration is invalid, or the driver failed to instantiate.
      */
     private SeleniumFactorySPI createSeleniumFactory() {
         try {
-            if (uri==null)
+            if (uri == null)
                 throw new IllegalArgumentException("Selenium driver URI is not set");
 
             Enumeration<URL> e = cl.getResources("META-INF/services/" + SeleniumFactorySPI.class.getName());
             SeleniumFactorySPI seleniumFactory = null;
             while (e.hasMoreElements()) {
                 URL url = e.nextElement();
-                LOGGER.fine("Reading "+url+" looking for "+SeleniumFactorySPI.class.getName());
-                BufferedReader in = new LineNumberReader(new InputStreamReader(url.openStream(),"UTF-8"));
+                LOGGER.fine("Reading " + url + " looking for " + SeleniumFactorySPI.class.getName());
+                BufferedReader in = new LineNumberReader(new InputStreamReader(url.openStream(), "UTF-8"));
                 try {
                     String line;
-                    while ((line=in.readLine())!=null) {
+                    while ((line = in.readLine()) != null) {
                         line = line.trim();
-                        if (line.startsWith("#"))   continue;   // comment
+                        if (line.startsWith("#")) continue;   // comment
 
                         // otherwise treat this as FQCN
-                        LOGGER.fine("Found "+line);
+                        LOGGER.fine("Found " + line);
                         try {
                             Class<?> c = cl.loadClass(line);
-                            LOGGER.fine("Loaded "+c);
+                            LOGGER.fine("Loaded " + c);
 
                             Object _spi = c.newInstance();
                             boolean canHandleRequest = false;
@@ -375,15 +376,15 @@ public class SeleniumFactory {
                                 }
                             }
                             if (!canHandleRequest) {
-                                URL img = c.getClassLoader().getResource(SeleniumFactorySPI.class.getName().replace('.','/')+".class");
-                                LOGGER.log(WARNING, url+" specifies an SPI class "+line+" but the class isn't assignable to "+SeleniumFactorySPI.class+". It's loading SPI from "+img);
+                                URL img = c.getClassLoader().getResource(SeleniumFactorySPI.class.getName().replace('.', '/') + ".class");
+                                LOGGER.log(WARNING, url + " specifies an SPI class " + line + " but the class isn't assignable to " + SeleniumFactorySPI.class + ". It's loading SPI from " + img);
                             }
                         } catch (ClassNotFoundException x) {
-                            LOGGER.log(WARNING, url+" specifies an SPI class "+line+" but the class failed to load",x);
+                            LOGGER.log(WARNING, url + " specifies an SPI class " + line + " but the class failed to load", x);
                         } catch (InstantiationException x) {
-                            LOGGER.log(WARNING, url+" specifies an SPI class "+line+" but the class failed to instantiate",x);
+                            LOGGER.log(WARNING, url + " specifies an SPI class " + line + " but the class failed to instantiate", x);
                         } catch (IllegalAccessException x) {
-                            LOGGER.log(WARNING, url+" specifies an SPI class "+line+" but the class failed to instantiate",x);
+                            LOGGER.log(WARNING, url + " specifies an SPI class " + line + " but the class failed to instantiate", x);
                         }
 
                     }
@@ -394,13 +395,13 @@ public class SeleniumFactory {
 
             if (seleniumFactory == null) {
                 throw new IllegalArgumentException(String.format(
-                    "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));
+                        "Unrecognized Selenium driver URI '%s'. Make sure you got the proper driver jars in your classpath, or increase the logging level to get more information.", uri));
             } else {
                 return seleniumFactory;
             }
 
         } catch (IOException x) {
-            throw new IllegalArgumentException("Failed to instantiate the driver",x);
+            throw new IllegalArgumentException("Failed to instantiate the driver", x);
         }
 
     }

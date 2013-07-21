@@ -30,6 +30,8 @@ import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 
+import java.util.List;
+
 /**
  * SPI implemented by the {@link Selenium} and {@link WebDriver} implementation providers.
  *
@@ -99,4 +101,6 @@ public abstract class SeleniumFactorySPI {
      * @return boolean that indicates whether the Factory can handle the incoming URI
      */
     public abstract boolean canHandle(String uri);
+
+    public abstract List<WebDriver> createWebDrivers(SeleniumFactory seleniumFactory, String browserURL);
 }

@@ -23,10 +23,9 @@
  */
 package com.saucelabs.selenium.client.embedded_rc;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.Selenium;
 import org.kohsuke.MetaInfServices;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -34,9 +33,10 @@ import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
 import org.openqa.selenium.server.cli.RemoteControlLauncher;
 
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-import com.thoughtworks.selenium.Selenium;
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.List;
 
 /**
  * {@link SeleniumFactorySPI} implementation that lets you run Selenium RC inside the same JVM.
@@ -166,6 +166,11 @@ public class EmbeddedRcSPIImpl extends SeleniumFactorySPI {
             return "*safari";
 
         return "*firefox";
+    }
+
+    @Override
+    public List<WebDriver> createWebDrivers(SeleniumFactory seleniumFactory, String browserURL) {
+        throw new IllegalArgumentException("Not Supported");
     }
 
     private static final String SCHEME = "embedded-rc:";

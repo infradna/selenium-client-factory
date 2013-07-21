@@ -23,28 +23,26 @@
  */
 package com.saucelabs.sauce_ondemand.driver;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.saucelabs.rest.Credential;
+import com.saucelabs.selenium.client.factory.SeleniumFactory;
+import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
+import com.thoughtworks.selenium.Selenium;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.kohsuke.MetaInfServices;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.saucelabs.rest.Credential;
-import com.saucelabs.selenium.client.factory.SeleniumFactory;
-import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
-import com.thoughtworks.selenium.Selenium;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * {@link SeleniumFactorySPI} that talks to Sauce OnDemand.
@@ -139,7 +137,11 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         uri = uri.substring(SCHEME.length());
         if (!uri.startsWith("?"))
             throw new IllegalArgumentException("Missing '?':" + factory.getUri());
+        return createWebDriver(browserURL, capabilities, uri);
 
+    }
+
+    private WebDriver createWebDriver(String browserURL, DesiredCapabilities capabilities, String uri) {
         // massage parameter into JSON format
         Map<String, List<String>> paramMap = populateParameterMap(uri);
 
@@ -155,6 +157,7 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
             if (browser.equals("firefox")) {
                 setFirefoxProfile(paramMap, desiredCapabilities);
             }
+            populateDesiredCapabilities(paramMap, desiredCapabilities);
         } else {
             //use Firefox as a default
             desiredCapabilities = capabilities;
@@ -180,12 +183,19 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
                     desiredCapabilities,
                     new Credential(getFirstParameter(paramMap, USERNAME), getFirstParameter(paramMap, ACCESS_KEY)),
                     getFirstParameter(paramMap, "job-name"));
+
             if (browserURL != null) {
                 driver.get(browserURL);
             }
             return driver;
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid URL: " + factory.getUri(), e);
+            throw new IllegalArgumentException("Invalid URL: " + uri, e);
+        }
+    }
+
+    private void populateDesiredCapabilities(Map<String, List<String>> paramMap, DesiredCapabilities desiredCapabilities) {
+        for (Entry<String, List<String>> entry : paramMap.entrySet()) {
+            desiredCapabilities.setCapability(entry.getKey(), entry.getValue().get(0));
         }
     }
 
@@ -272,5 +282,34 @@ public class SauceOnDemandSPIImpl extends SeleniumFactorySPI {
         if (v == null)
             v = defaultValue;
         return v;
+    }
+
+    @Override
+    public List<WebDriver> createWebDrivers(SeleniumFactory seleniumFactory, String browserURL) {
+
+        List<WebDriver> webDrivers = new ArrayList<WebDriver>();
+        String browserJson = readPropertyOrEnv("SAUCE_ONDEMAND_BROWSERS", null);
+        if (browserJson == null) {
+            throw new IllegalArgumentException("Unable to find SAUCE_ONDEMAND_BROWSERS environment variable");
+        }
+        //parse JSON
+        try {
+            JSONArray array = new JSONArray(new JSONTokener(browserJson));
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                String uri = object.getString("url");
+                if (!uri.startsWith(SCHEME))
+                    return null; // not ours
+
+                uri = uri.substring(SCHEME.length());
+                if (!uri.startsWith("?"))
+                    throw new IllegalArgumentException("Missing '?':" + uri);
+                webDrivers.add(createWebDriver(browserURL, null, uri));
+            }
+        } catch (JSONException e) {
+            throw new IllegalArgumentException("Error parsing JSON", e);
+        }
+
+        return Collections.unmodifiableList(webDrivers);
     }
 }
