@@ -104,7 +104,7 @@ public class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, S
 
     public void jobFailed() throws IOException {
         Map<String, Object> updates = new HashMap<String, Object>();
-        updates.put("passed", true);
+        updates.put("passed", false);
         updateJobInfo(updates);
     }
 
@@ -119,6 +119,12 @@ public class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, S
     public void setBuildNumber(String buildNumber) throws IOException {
         Map<String, Object> updates = new HashMap<String, Object>();
         updates.put("build", buildNumber);
+        updateJobInfo(updates);
+    }
+
+    public void setJobName(String jobName) throws IOException {
+        Map<String, Object> updates = new HashMap<String, Object>();
+        updates.put("name", jobName);
         updateJobInfo(updates);
     }
 

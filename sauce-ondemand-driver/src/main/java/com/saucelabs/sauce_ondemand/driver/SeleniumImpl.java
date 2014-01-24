@@ -84,13 +84,13 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium, Sel
         lastSessionId = getSessionId();
         System.out.println("SauceOnDemandSessionID=" + lastSessionId + " job-name=" + jobName);
     }
-    
+
     public String getSessionId() {
         try {
             Field f = commandProcessor.getClass().getDeclaredField("sessionId");
             f.setAccessible(true);
             Object id = f.get(commandProcessor);
-            if (id!=null)   return id.toString();
+            if (id != null) return id.toString();
             return lastSessionId;
         } catch (NoSuchFieldException e) {
             // failed to retrieve the session ID
@@ -144,7 +144,7 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium, Sel
         updateJobInfo(updates);
     }
 
-    private void updateJobInfo(Map<String,Object> updates) throws IOException {
+    private void updateJobInfo(Map<String, Object> updates) throws IOException {
         JobFactory jobFactory = new JobFactory(credential);
         jobFactory.update(lastSessionId, updates);
     }
@@ -158,6 +158,12 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium, Sel
     public void setBuildNumber(String buildNumber) throws IOException {
         Map<String, Object> updates = new HashMap<String, Object>();
         updates.put("build", buildNumber);
+        updateJobInfo(updates);
+    }
+
+    public void setJobName(String jobName) throws IOException {
+        Map<String, Object> updates = new HashMap<String, Object>();
+        updates.put("name", jobName);
         updateJobInfo(updates);
     }
 }

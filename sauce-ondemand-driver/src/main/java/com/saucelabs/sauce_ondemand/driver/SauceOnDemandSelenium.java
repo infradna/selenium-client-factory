@@ -29,8 +29,6 @@ import com.thoughtworks.selenium.Selenium;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Additional methods exposed by {@link Selenium} returned from the "sauce-ondemand:..." URL.
@@ -91,5 +89,6 @@ public interface SauceOnDemandSelenium {
     void jobFailed() throws IOException;
 
     void setBuildNumber(String buildNumber) throws IOException;
-        
+
+    void setJobName(String jobName) throws IOException;
 }
