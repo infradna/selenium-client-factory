@@ -18,7 +18,7 @@ To reference the library, include the following dependencies in your Maven proje
 <dependency>
     <groupId>com.saucelabs.selenium</groupId>
     <artifactId>selenium-client-factory</artifactId>
-    <version>2.6</version>
+    <version>2.13</version>
     <scope>test</scope>
 </dependency>
 ```
