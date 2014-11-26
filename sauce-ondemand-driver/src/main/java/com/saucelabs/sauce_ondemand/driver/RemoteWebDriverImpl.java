@@ -1,7 +1,6 @@
 package com.saucelabs.sauce_ondemand.driver;
 
-import com.saucelabs.rest.Credential;
-import com.saucelabs.rest.JobFactory;
+import com.saucelabs.saucerest.SauceREST;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -27,7 +26,7 @@ public class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, S
 
     private Credential credential;
 
-    public RemoteWebDriverImpl(){
+    public RemoteWebDriverImpl() {
         super();
     }
 
@@ -91,15 +90,15 @@ public class RemoteWebDriverImpl extends RemoteWebDriver implements WebDriver, S
         return openWithAuth(getVideo());
     }
 
-   public void jobPassed() throws IOException {
+    public void jobPassed() throws IOException {
         Map<String, Object> updates = new HashMap<String, Object>();
         updates.put("passed", true);
         updateJobInfo(updates);
     }
 
-    private void updateJobInfo(Map<String,Object> updates) throws IOException {
-        JobFactory jobFactory = new JobFactory(credential);
-        jobFactory.update(getSessionIdValue(), updates);
+    private void updateJobInfo(Map<String, Object> updates) throws IOException {
+        SauceREST sauceREST = new SauceREST(credential.getUsername(), credential.getKey());
+        sauceREST.updateJobInfo(lastSessionId.toString(), updates);
     }
 
     public void jobFailed() throws IOException {

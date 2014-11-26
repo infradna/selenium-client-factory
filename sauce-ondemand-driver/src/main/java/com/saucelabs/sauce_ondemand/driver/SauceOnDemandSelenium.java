@@ -23,7 +23,6 @@
  */
 package com.saucelabs.sauce_ondemand.driver;
 
-import com.saucelabs.rest.Credential;
 import com.thoughtworks.selenium.Selenium;
 
 import java.io.IOException;

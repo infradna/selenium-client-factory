@@ -23,8 +23,7 @@
  */
 package com.saucelabs.sauce_ondemand.driver;
 
-import com.saucelabs.rest.Credential;
-import com.saucelabs.rest.JobFactory;
+import com.saucelabs.saucerest.SauceREST;
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
 import sun.misc.BASE64Encoder;
@@ -145,8 +144,9 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium, Sel
     }
 
     private void updateJobInfo(Map<String, Object> updates) throws IOException {
-        JobFactory jobFactory = new JobFactory(credential);
-        jobFactory.update(lastSessionId, updates);
+        SauceREST sauceREST = new SauceREST(credential.getUsername(), credential.getKey());
+        sauceREST.updateJobInfo(lastSessionId, updates);
+
     }
 
     public void jobFailed() throws IOException {

@@ -23,7 +23,6 @@
  */
 package com.saucelabs.sauce_ondemand.driver;
 
-import com.saucelabs.rest.Credential;
 import com.saucelabs.selenium.client.factory.SeleniumFactory;
 import com.saucelabs.selenium.client.factory.spi.SeleniumFactorySPI;
 import com.thoughtworks.selenium.Selenium;

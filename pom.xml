@@ -17,14 +17,6 @@
     </modules>
 
     <distributionManagement>
-        <!--repository>
-          <id>maven.jenkins-ci.org</id>
-          <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
-        </repository-->
-        <!--site>
-          <id>infradna.com</id>
-          <url>scp://www-data@infradna.com/var/www/selenium-client-factory.infradna.com</url>
-        </site-->
         <repository>
             <id>cloudbees-private-release-repository</id>
             <url>dav:https://repository-saucelabs.forge.cloudbees.com/release</url>
