@@ -131,7 +131,14 @@ class SeleniumImpl extends DefaultSelenium implements SauceOnDemandSelenium, Sel
 
     private InputStream openWithAuth(URL url) throws IOException {
         URLConnection con = url.openConnection();
-        String encodedAuthorization = new BASE64Encoder().encode(
+        //Handle long strings encoded using BASE64Encoder - see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6947917
+        BASE64Encoder encoder = new BASE64Encoder() {
+            @Override
+            protected int bytesPerLine() {
+                return 9999;
+            }
+        };
+        String encodedAuthorization = encoder.encode(
                 (credential.getUsername() + ":" + credential.getKey()).getBytes());
         con.setRequestProperty("Authorization", "Basic " + encodedAuthorization);
         return con.getInputStream();
