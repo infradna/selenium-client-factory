@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.saucelabs.selenium</groupId>
     <artifactId>selenium-client-factory-parent</artifactId>
@@ -106,6 +107,11 @@
                 <artifactId>wagon-svn</artifactId>
                 <version>1.9</version>
             </extension>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2</version>
+            </extension>
         </extensions>
     </build>
 
@@ -131,8 +137,8 @@
             <url>http://maven.dyndns.org/2/</url>
         </repository>
         <repository>
-          <id>maven.jenkins-ci.org</id>
-          <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
+            <id>maven.jenkins-ci.org</id>
+            <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
         </repository>
         <repository>
             <id>cloudbees-private-release-repository</id>
