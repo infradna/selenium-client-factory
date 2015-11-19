@@ -15,7 +15,7 @@
   <body>
     <menu name="Selenium Client Factory for Java">
       <item name="Introduction" href="index.html"/>
-      <item name="Download" href="http://maven.dyndns.org/2/org/seleniumhq/selenium/client/factory/"/>
+      <item name="Download" href="http://mvnrepository.com/artifact/com.saucelabs.selenium/selenium-client-factory"/>
     </menu>
 
     <menu name="Drivers">
